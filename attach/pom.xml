@@ -105,6 +105,8 @@
 
                 <configuration>
                     <finalName>${project.build.finalName}-shaded</finalName>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <shadedClassifierName>shaded</shadedClassifierName>
                 </configuration>
             </plugin>
         </plugins>

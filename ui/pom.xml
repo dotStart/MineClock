@@ -65,6 +65,10 @@
 
                 <configuration>
                     <archive>
+                        <manifest>
+                            <mainClass>rocks.spud.minecraft.mineclock.MineClockApplication</mainClass>
+                        </manifest>
+
                         <manifestEntries>
                             <Agent-Class>rocks.spud.minecraft.mineclock.attach.agent.MinecraftAgent</Agent-Class>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
@@ -78,6 +82,24 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
+            </plugin>
+
+            <!-- Shade -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+
+            <!-- Copy Dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+            </plugin>
+
+            <!-- Launch4j2 -->
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

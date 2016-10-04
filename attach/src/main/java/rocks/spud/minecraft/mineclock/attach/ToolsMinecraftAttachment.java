@@ -22,7 +22,6 @@ import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +50,7 @@ class ToolsMinecraftAttachment implements MinecraftAttachment {
                 .findAny()
                 .ifPresent((d) -> {
                     try {
-                        String path = this.getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+                        String path = Paths.get("lib", "rocks.spud.minecraft.mineclock.attach.jar").toAbsolutePath().toString();
 
                         if (System.getProperty("development-mode") != null) {
                             System.err.println("Relying on maven generated jar in working directory!");
@@ -65,9 +64,6 @@ class ToolsMinecraftAttachment implements MinecraftAttachment {
                         vm.detach();
 
                         this.machineIds.add(d.id());
-                    } catch (URISyntaxException ex) {
-                        System.err.println("JAR is located in invalid path: " + ex.getMessage());
-                        ex.printStackTrace();
                     } catch (AttachNotSupportedException | IOException ex) {
                         System.err.println("Attaching not supported or failed: " + ex.getMessage());
                         ex.printStackTrace();
