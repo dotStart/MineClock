@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<StackPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="rocks.spud.minecraft.mineclock.controller.MainWindowController" styleClass="window" minWidth="960" minHeight="540" maxWidth="960" maxHeight="540" alignment="TOP_CENTER">
+    <stylesheets>
+        <URL value="@/style/MainWindow.css"/>
+    </stylesheets>
+
+    <ImageView fx:id="cycle" fitHeight="1920" managed="false" layoutX="-480" layoutY="-420">
+        <Image url="/image/background/cycle.png" />
+    </ImageView>
+    <ImageView>
+        <Image url="/image/background/mask.png" />
+    </ImageView>
+    <ImageView fx:id="backgroundDay" opacity="0">
+        <Image url="/image/background/day.png" />
+    </ImageView>
+    <ImageView fx:id="backgroundEvening" opacity="0">
+        <Image url="/image/background/evening.png" />
+    </ImageView>
+    <ImageView fx:id="backgroundMorning">
+        <Image url="/image/background/morning.png" />
+    </ImageView>
+    <ImageView fx:id="backgroundNight" opacity="0">
+        <Image url="/image/background/night.png" />
+    </ImageView>
+
+    <VBox alignment="TOP_LEFT">
+        <HBox styleClass="titleBar" alignment="TOP_LEFT" onMousePressed="#onTitleBarMousePressed" onMouseDragged="#onTitleBarMouseDragged">
+            <Label styleClass="title" text="MineClock">
+                <padding>
+                    <Insets top="6" left="10" />
+                </padding>
+            </Label>
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button styleClass="iconify" onAction="#onIconify" text="_" />
+            <Button styleClass="close" onAction="#onClose" text="X" />
+        </HBox>
+        <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS" spacing="70">
+            <padding>
+                <Insets left="15" top="50" right="15" bottom="50" />
+            </padding>
+
+            <Pane VBox.vgrow="ALWAYS" />
+
+            <VBox styleClass="informational" alignment="TOP_CENTER">
+                <Label fx:id="time" text="00:00 AM" styleClass="time" />
+                <Label fx:id="rainLabel" styleClass="subtitle" text="Rain" opacity="0.0" />
+            </VBox>
+
+            <HBox fx:id="controls" styleClass="controls" alignment="BOTTOM_CENTER" spacing="20" opacity="1.0">
+                <Button text="Morning" onAction="#onSetMorning" />
+                <Button text="Noon" onAction="#onSetNoon" />
+                <Button text="Evening" onAction="#onSetEvening" />
+                <Button text="Midnight" onAction="#onSetMidnight" />
+            </HBox>
+            <Label fx:id="attachmentLabel" styleClass="attached" alignment="BOTTOM_CENTER" text="Attached" opacity="0.0" />
+        </VBox>
+    </VBox>
+</StackPane>
