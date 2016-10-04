@@ -147,7 +147,7 @@ public class MinecraftAgent {
      * Pushes a new update to the server.
      */
     public static void pushUpdate(@Nonnegative long worldTime, @Nonnegative long worldAge, boolean raining) {
-        if (lastUpdate + 200 < worldAge) {
+        if (lastUpdate + 100 < worldAge) {
             protocol.push(new ClockMessage(worldTime, worldAge, raining));
             lastUpdate = worldAge;
         }
