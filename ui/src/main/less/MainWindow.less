@@ -1,0 +1,77 @@
+/*
+ * Copyright 2016 Johannes Donath <johannesd@torchmind.com>
+ * and other copyright owners as documented in the project's IP log.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * 	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+.window {
+  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 12, 0.0, 0, 0);
+}
+
+.button {
+  -fx-background-radius: 0;
+  -fx-border-radius: 0;
+  -fx-border-style: none;
+  -fx-border-width: 0;
+  -fx-font-size: 14px;
+}
+
+.titleBar {
+  -fx-background-color: rgba(0, 0, 0, 0.1);
+
+  .title {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+  }
+
+  .iconify,
+  .close {
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-padding: 6px 14px;
+
+    &:hover {
+      -fx-background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+.informational .label {
+  -fx-text-fill: white;
+}
+
+.subtitle {
+  -fx-font-size: 32px;
+}
+
+.time {
+  -fx-font-size: 64px;
+}
+
+.controls {
+
+  .button {
+    -fx-background-color: rgba(0, 0, 0, 0.6);
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
+
+    &:hover {
+      -fx-background-color: rgba(0, 0, 0, 0.7);
+    }
+  }
+}
+
+.attached {
+  -fx-text-fill: rgba(255, 255, 255, 0.5);
+  -fx-font-size: 24px;
+}
