@@ -41,6 +41,8 @@
                 </padding>
             </Label>
             <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="portraitButton" styleClass="portrait" onAction="#onPortrait" text="|" />
+            <Button fx:id="landscapeButton" visible="false" styleClass="portrait" onAction="#onLandscape" text="-" />
             <Button styleClass="iconify" onAction="#onIconify" text="_" />
             <Button styleClass="close" onAction="#onClose" text="X" />
         </HBox>

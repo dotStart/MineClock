@@ -34,6 +34,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -64,6 +65,11 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private StackPane root;
+    @FXML
+    private Button portraitButton;
+    @FXML
+    private Button landscapeButton;
+
     @FXML
     private ImageView cycle;
     @FXML
@@ -161,6 +167,19 @@ public class MainWindowController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Button Switching
+        this.portraitButton.visibleProperty().addListener((ob, o, n) -> {
+            if (this.landscapeButton.isVisible() == n) {
+                this.landscapeButton.setVisible(!n);
+            }
+        });
+
+        this.landscapeButton.visibleProperty().addListener((ob, o, n) -> {
+            if (this.portraitButton.isVisible() == n) {
+                this.portraitButton.setVisible(!n);
+            }
+        });
+
         // Morning
         this.cycleTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(this.backgroundMorning.opacityProperty(), 1)));
         this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.125), new KeyValue(this.backgroundMorning.opacityProperty(), 0)));
@@ -197,6 +216,22 @@ public class MainWindowController implements Initializable {
      */
     private void setCycleTime(@Nonnegative double percentage) {
         this.cycleTimeline.jumpTo(CYCLE_TIME.multiply(percentage));
+    }
+
+    @FXML
+    private void onPortrait(@Nonnull ActionEvent event) {
+        this.root.getScene().getWindow().setWidth(400);
+        this.root.getStyleClass().add("portrait");
+
+        this.portraitButton.setVisible(false);
+    }
+
+    @FXML
+    private void onLandscape(@Nonnull ActionEvent event) {
+        this.root.getScene().getWindow().setWidth(960);
+        this.root.getStyleClass().remove("portrait");
+
+        this.landscapeButton.setVisible(false);
     }
 
     @FXML
