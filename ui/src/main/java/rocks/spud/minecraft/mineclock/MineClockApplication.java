@@ -43,7 +43,7 @@ import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MineClockApplication extends Application {
-    private static final String[] TOOLS_PATH_FORMATS = new String[] { "../lib/tools.jar", "../Classes/classes.jar" };
+    private static final String[] TOOLS_PATH_FORMATS = new String[] { "../lib/tools.jar", "../Classes/classes.jar", "lib/tools.jar", "Classes/classes.jar" };
     private Injector injector;
 
     /**
