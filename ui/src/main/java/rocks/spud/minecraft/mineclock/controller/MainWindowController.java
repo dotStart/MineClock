@@ -221,6 +221,41 @@ public class MainWindowController implements Initializable {
         this.cycleTimeline.jumpTo(CYCLE_TIME.multiply(percentage));
     }
 
+    /**
+     * Handles clock updates from an attached virtual machine.
+     */
+    private void onClockUpdate(@Nonnull final ClockMessage message) {
+        Platform.runLater(() -> {
+            this.attachmentUpdateTime = Instant.now();
+
+            if (this.controls.getOpacity() == 1.0) {
+                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.controls);
+                fadeOutTransition.setFromValue(1.0);
+                fadeOutTransition.setToValue(0.0);
+                fadeOutTransition.play();
+
+                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.attachmentLabel);
+                fadeInTransition.setFromValue(0.0);
+                fadeInTransition.setToValue(1.0);
+                fadeInTransition.play();
+            }
+
+            if (message.isRaining() && this.rainLabel.getOpacity() == 0.0) {
+                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
+                fadeInTransition.setFromValue(0.0);
+                fadeInTransition.setToValue(1.0);
+                fadeInTransition.play();
+            } else if (!message.isRaining() && this.rainLabel.getOpacity() == 1.0) {
+                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
+                fadeOutTransition.setFromValue(1.0);
+                fadeOutTransition.setToValue(0.0);
+                fadeOutTransition.play();
+            }
+
+            this.cycleTimeline.jumpTo(CYCLE_TIME.multiply((message.getWorldTime() / 24000.0d)));
+        });
+    }
+
     @FXML
     private void onPortrait(@Nonnull ActionEvent event) {
         this.root.getScene().getWindow().setWidth(400);
@@ -285,40 +320,5 @@ public class MainWindowController implements Initializable {
     @FXML
     private void onSetMidnight(@Nonnull ActionEvent event) {
         this.setCycleTime(0.75);
-    }
-
-    /**
-     * Handles clock updates from an attached virtual machine.
-     */
-    private void onClockUpdate(@Nonnull final ClockMessage message) {
-        Platform.runLater(() -> {
-            this.attachmentUpdateTime = Instant.now();
-
-            if (this.controls.getOpacity() == 1.0) {
-                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.controls);
-                fadeOutTransition.setFromValue(1.0);
-                fadeOutTransition.setToValue(0.0);
-                fadeOutTransition.play();
-
-                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.attachmentLabel);
-                fadeInTransition.setFromValue(0.0);
-                fadeInTransition.setToValue(1.0);
-                fadeInTransition.play();
-            }
-
-            if (message.isRaining() && this.rainLabel.getOpacity() == 0.0) {
-                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-                fadeInTransition.setFromValue(0.0);
-                fadeInTransition.setToValue(1.0);
-                fadeInTransition.play();
-            } else if (!message.isRaining() && this.rainLabel.getOpacity() == 1.0) {
-                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-                fadeOutTransition.setFromValue(1.0);
-                fadeOutTransition.setToValue(0.0);
-                fadeOutTransition.play();
-            }
-
-            this.cycleTimeline.jumpTo(CYCLE_TIME.multiply((message.getWorldTime() / 24000.0d)));
-        });
     }
 }
