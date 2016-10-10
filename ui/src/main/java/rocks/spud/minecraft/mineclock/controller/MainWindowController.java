@@ -49,6 +49,9 @@ import rocks.spud.minecraft.mineclock.attach.agent.common.ClockMessage;
 import rocks.spud.minecraft.mineclock.attach.agent.common.ClockProtocol;
 
 /**
+ * Provides a main application controller which handles the functionality declared in {@code
+ * MainWindow.fxml}.
+ *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MainWindowController implements Initializable {
