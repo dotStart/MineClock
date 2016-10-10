@@ -66,6 +66,7 @@ public class MainWindowController implements Initializable {
     private final Timer attachmentTimer;
     private Instant attachmentUpdateTime;
 
+    // <editor-fold desc="FXML Elements">
     @FXML
     private StackPane root;
     @FXML
@@ -93,6 +94,7 @@ public class MainWindowController implements Initializable {
     private HBox controls;
     @FXML
     private Label attachmentLabel;
+    // </editor-fold>
 
     private double initialX;
     private double initialY;
