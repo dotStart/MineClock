@@ -16,6 +16,9 @@
  */
 package rocks.spud.minecraft.mineclock.controller;
 
+import com.google.inject.Injector;
+
+import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ResourceBundle;
@@ -24,6 +27,7 @@ import java.util.TimerTask;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -33,17 +37,23 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import rocks.spud.minecraft.mineclock.attach.MinecraftAttachment;
 import rocks.spud.minecraft.mineclock.attach.agent.common.ClockMessage;
 import rocks.spud.minecraft.mineclock.attach.agent.common.ClockProtocol;
+import rocks.spud.minecraft.mineclock.service.ConfigurationService;
 
 /**
  * Provides a main application controller which handles the functionality declared in {@code
@@ -54,6 +64,9 @@ import rocks.spud.minecraft.mineclock.attach.agent.common.ClockProtocol;
 public class MainWindowController implements Initializable {
     private static final Duration CYCLE_TIME = Duration.minutes(20);
     private static final java.time.Duration ATTACHMENT_EXPIRATION_DURATION = java.time.Duration.ofSeconds(20);
+
+    private final Injector injector;
+    private final ConfigurationService configurationService;
 
     private final Rotate cycleRotation = new Rotate(-90, 960, 960);
     private final Timeline cycleTimeline = new Timeline();
@@ -93,7 +106,11 @@ public class MainWindowController implements Initializable {
     private Label attachmentLabel;
     // </editor-fold>
 
-    public MainWindowController() {
+    @Inject
+    public MainWindowController(@Nonnull Injector injector, @Nonnull ConfigurationService configurationService) {
+        this.injector = injector;
+        this.configurationService = configurationService;
+
         this.cycleTimeline.setCycleCount(Animation.INDEFINITE);
         this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME, new KeyValue(this.cycleRotation.angleProperty(), 270)));
 
@@ -151,7 +168,9 @@ public class MainWindowController implements Initializable {
                         }
                     });
 
-                    minecraftAttachment.refresh();
+                    if (configurationService.isAutomaticallyAttach()) {
+                        minecraftAttachment.refresh();
+                    }
                 }
             }, 1000, 2000);
         } else {
@@ -209,6 +228,14 @@ public class MainWindowController implements Initializable {
         this.cycle.getTransforms().add(this.cycleRotation);
 
         this.cycleTimeline.play();
+
+        // Switch to Portrait if requested
+        if (this.configurationService.isLaunchPortraitMode()) {
+            Platform.runLater(() -> {
+                // noinspection ConstantConditions
+                this.onPortrait(null);
+            });
+        }
     }
 
     /**
@@ -225,6 +252,12 @@ public class MainWindowController implements Initializable {
      */
     private void onClockUpdate(@Nonnull final ClockMessage message) {
         Platform.runLater(() -> {
+            // We will actively ignore attachment packets while attachment is disabled to give the
+            // impression of the effects immediately applying to the application
+            if (!this.configurationService.isAutomaticallyAttach()) {
+                return;
+            }
+
             this.attachmentUpdateTime = Instant.now();
 
             if (this.controls.getOpacity() == 1.0) {
@@ -239,12 +272,12 @@ public class MainWindowController implements Initializable {
                 fadeInTransition.play();
             }
 
-            if (message.isRaining() && this.rainLabel.getOpacity() == 0.0) {
+            if (message.isRaining() && this.configurationService.isDisplayWeather() && this.rainLabel.getOpacity() == 0.0) {
                 FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
                 fadeInTransition.setFromValue(0.0);
                 fadeInTransition.setToValue(1.0);
                 fadeInTransition.play();
-            } else if (!message.isRaining() && this.rainLabel.getOpacity() == 1.0) {
+            } else if ((!message.isRaining() || !this.configurationService.isDisplayWeather()) && this.rainLabel.getOpacity() == 1.0) {
                 FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
                 fadeOutTransition.setFromValue(1.0);
                 fadeOutTransition.setToValue(0.0);
@@ -256,6 +289,24 @@ public class MainWindowController implements Initializable {
     }
 
     // <editor-fold desc="Event Handlers">
+    @FXML
+    private void onSettings(@Nonnull ActionEvent event) {
+        try {
+            Scene scene = new Scene(this.injector.getInstance(FXMLLoader.class).load(this.getClass().getResourceAsStream("/fxml/SettingsWindow.fxml")));
+
+            Stage stage = new Stage(StageStyle.UNDECORATED);
+            stage.initOwner(this.root.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.setWidth(500);
+            stage.setHeight(500);
+
+            stage.show();
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not access settings window: " + ex.getMessage(), ex);
+        }
+    }
+
     @FXML
     private void onPortrait(@Nonnull ActionEvent event) {
         this.root.getScene().getWindow().setWidth(400);

@@ -39,6 +39,7 @@
         <TitleBar title="MineClock">
             <Button fx:id="portraitButton" onAction="#onPortrait" text="&#xf066;" />
             <Button fx:id="landscapeButton" onAction="#onLandscape" text="&#xf065;" visible="false" />
+            <Button onAction="#onSettings" text="&#xf085;" />
         </TitleBar>
         <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS" spacing="70">
             <padding>
