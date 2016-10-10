@@ -168,6 +168,9 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Button Switching
+        this.portraitButton.managedProperty().bind(this.portraitButton.visibleProperty());
+        this.landscapeButton.managedProperty().bind(this.landscapeButton.visibleProperty());
+
         this.portraitButton.visibleProperty().addListener((ob, o, n) -> {
             if (this.landscapeButton.isVisible() == n) {
                 this.landscapeButton.setVisible(!n);
