@@ -19,6 +19,7 @@ package rocks.spud.minecraft.mineclock;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -101,6 +102,36 @@ public class MineClockApplication extends Application {
             } catch (IllegalAccessException | InvocationTargetException | MalformedURLException | NoSuchFieldException | NoSuchMethodException ignore) {
             }
         }
+    }
+
+    /**
+     * Retrieves the path to a systems specific storage directory.
+     *
+     * @return a storage directory.
+     */
+    @Nonnull
+    public static Path getApplicationDirectory() {
+        Path basePath = null;
+
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            String applicationDataDirectory = System.getenv("APPDATA");
+
+            if (applicationDataDirectory != null) {
+                basePath = Paths.get(applicationDataDirectory, ".mineclock");
+            }
+        }
+
+        if (basePath == null) {
+            basePath = Paths.get(System.getProperty("java.home"), ".mineclock");
+        }
+
+        try {
+            Files.createDirectories(basePath);
+        } catch (IOException ex) {
+            throw new RuntimeException("Could not create application storage directory: " + ex.getMessage(), ex);
+        }
+
+        return basePath;
     }
 
     public static void main(String[] arguments) {
