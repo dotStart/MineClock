@@ -19,6 +19,8 @@ package rocks.spud.minecraft.mineclock;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -35,6 +37,11 @@ import javax.annotation.Nonnull;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
@@ -43,7 +50,7 @@ import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MineClockApplication extends Application {
-    private static final String[] TOOLS_PATH_FORMATS = new String[] { "../lib/tools.jar", "../Classes/classes.jar", "lib/tools.jar", "Classes/classes.jar" };
+    private static final String[] TOOLS_PATH_FORMATS = new String[]{"../lib/tools.jar", "../Classes/classes.jar", "lib/tools.jar", "Classes/classes.jar"};
     private Injector injector;
 
     /**
@@ -55,7 +62,7 @@ public class MineClockApplication extends Application {
         Path jdkPath = null;
         String toolsFormat = null;
 
-        for (String toolPathFormat :  TOOLS_PATH_FORMATS) {
+        for (String toolPathFormat : TOOLS_PATH_FORMATS) {
             jdkPath = Paths.get(System.getProperty("java.home")).toAbsolutePath();
             toolsFormat = toolPathFormat;
             System.out.println("Checking " + jdkPath.toString() + " for valid JDK libraries");
@@ -99,6 +106,41 @@ public class MineClockApplication extends Application {
     public static void main(String[] arguments) {
         augmentBootstrapClassLoader();
         launch(MineClockApplication.class, arguments);
+    }
+
+    /**
+     * Displays a dialog which reports an unexpected exception to a user in a way that allows them
+     * to easily report it.
+     */
+    public static void reportError(@Nonnull Throwable throwable) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.initModality(Modality.APPLICATION_MODAL);
+
+        alert.setTitle("Application Error");
+        alert.setHeaderText("Application Error");
+        alert.setContentText("An unexpected condition occurred and the requested action has not completed successfully. This is a bug, please report it as such.");
+
+        // Create expandable Exception.
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        String exceptionText = sw.toString();
+
+        TextArea textArea = new TextArea(exceptionText);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(textArea, 0, 1);
+
+        alert.getDialogPane().setExpandableContent(expContent);
+        alert.showAndWait();
     }
 
     /**
