@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import rocks.spud.minecraft.mineclock.control.TitleBar?>
 <StackPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="rocks.spud.minecraft.mineclock.controller.MainWindowController" styleClass="window" minWidth="960" minHeight="540" maxWidth="960" maxHeight="540" alignment="TOP_CENTER">
     <stylesheets>
         <URL value="@/style/Window.css"/>
@@ -35,22 +36,10 @@
     </ImageView>
 
     <VBox alignment="TOP_LEFT">
-        <HBox styleClass="titleBar" alignment="TOP_LEFT" onMousePressed="#onTitleBarMousePressed" onMouseDragged="#onTitleBarMouseDragged">
-            <Label styleClass="title" text="MineClock">
-                <padding>
-                    <Insets top="6" left="10" />
-                </padding>
-            </Label>
-
-            <Pane HBox.hgrow="ALWAYS" />
-
-            <HBox styleClass="actions" HBox.hgrow="NEVER">
-                <Button fx:id="portraitButton" onAction="#onPortrait" text="&#xf066;" />
-                <Button fx:id="landscapeButton" onAction="#onLandscape" text="&#xf065;" visible="false" />
-                <Button onAction="#onIconify" text="&#xf070;" />
-                <Button onAction="#onClose" text="&#xf00d;" />
-            </HBox>
-        </HBox>
+        <TitleBar title="MineClock" prefHeight="30">
+            <Button fx:id="portraitButton" onAction="#onPortrait" text="&#xf066;" />
+            <Button fx:id="landscapeButton" onAction="#onLandscape" text="&#xf065;" visible="false" />
+        </TitleBar>
         <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS" spacing="70">
             <padding>
                 <Insets left="15" top="50" right="15" bottom="50" />

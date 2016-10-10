@@ -37,12 +37,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Rotate;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import rocks.spud.minecraft.mineclock.attach.MinecraftAttachment;
 import rocks.spud.minecraft.mineclock.attach.agent.common.ClockMessage;
@@ -95,9 +92,6 @@ public class MainWindowController implements Initializable {
     @FXML
     private Label attachmentLabel;
     // </editor-fold>
-
-    private double initialX;
-    private double initialY;
 
     public MainWindowController() {
         this.cycleTimeline.setCycleCount(Animation.INDEFINITE);
@@ -276,36 +270,6 @@ public class MainWindowController implements Initializable {
         this.root.getStyleClass().remove("portrait");
 
         this.landscapeButton.setVisible(false);
-    }
-
-    @FXML
-    private void onIconify(@Nonnull ActionEvent event) {
-        ((Stage) this.root.getScene().getWindow()).setIconified(true);
-    }
-
-    @FXML
-    private void onTitleBarMousePressed(@Nonnull MouseEvent event) {
-        if (event.getButton() != MouseButton.MIDDLE) {
-            initialX = event.getSceneX();
-            initialY = event.getSceneY();
-        } else {
-            this.root.getScene().getWindow().centerOnScreen();
-            initialX = this.root.getScene().getWindow().getX();
-            initialY = this.root.getScene().getWindow().getY();
-        }
-    }
-
-    @FXML
-    private void onTitleBarMouseDragged(@Nonnull MouseEvent event) {
-        if (event.getButton() != MouseButton.MIDDLE) {
-            this.root.getScene().getWindow().setX(event.getScreenX() - initialX);
-            this.root.getScene().getWindow().setY(event.getScreenY() - initialY);
-        }
-    }
-
-    @FXML
-    private void onClose(@Nonnull ActionEvent event) {
-        Platform.exit();
     }
 
     @FXML
