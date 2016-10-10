@@ -14,36 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.window {
-  -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.6), 12, 0.0, 0, 0);
-}
-
-.button {
-  -fx-background-radius: 0;
-  -fx-border-radius: 0;
-  -fx-border-style: none;
-  -fx-border-width: 0;
-  -fx-font-size: 14px;
-}
-
-.titleBar {
-  -fx-background-color: rgba(0, 0, 0, 0.1);
-
-  .title {
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-  }
-
-  .button {
-    -fx-text-fill: white;
-    -fx-background-color: transparent;
-    -fx-padding: 6px 14px;
-
-    &:hover {
-      -fx-background-color: rgba(255, 255, 255, 0.1);
-    }
-  }
-}
 
 .informational .label {
   -fx-text-fill: white;
@@ -54,11 +24,11 @@
 }
 
 .time {
+  -fx-font-weight: 500;
   -fx-font-size: 64px;
 }
 
 .controls {
-
   .button {
     -fx-background-color: rgba(0, 0, 0, 0.6);
     -fx-font-size: 18px;
@@ -76,7 +46,6 @@
 }
 
 .window.portrait {
-
   .controls .button {
     -fx-font-size: 12px;
   }

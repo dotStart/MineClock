@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <StackPane xmlns:fx="http://javafx.com/fxml" fx:id="root" fx:controller="rocks.spud.minecraft.mineclock.controller.MainWindowController" styleClass="window" minWidth="960" minHeight="540" maxWidth="960" maxHeight="540" alignment="TOP_CENTER">
     <stylesheets>
+        <URL value="@/style/Window.css"/>
         <URL value="@/style/MainWindow.css"/>
     </stylesheets>
 
@@ -40,11 +41,15 @@
                     <Insets top="6" left="10" />
                 </padding>
             </Label>
+
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="portraitButton" styleClass="portrait" onAction="#onPortrait" text="|" />
-            <Button fx:id="landscapeButton" visible="false" styleClass="portrait" onAction="#onLandscape" text="-" />
-            <Button styleClass="iconify" onAction="#onIconify" text="_" />
-            <Button styleClass="close" onAction="#onClose" text="X" />
+
+            <HBox styleClass="actions" HBox.hgrow="NEVER">
+                <Button fx:id="portraitButton" onAction="#onPortrait" text="&#xf066;" />
+                <Button fx:id="landscapeButton" onAction="#onLandscape" text="&#xf065;" visible="false" />
+                <Button onAction="#onIconify" text="&#xf070;" />
+                <Button onAction="#onClose" text="&#xf00d;" />
+            </HBox>
         </HBox>
         <VBox alignment="BOTTOM_CENTER" VBox.vgrow="ALWAYS" spacing="70">
             <padding>
