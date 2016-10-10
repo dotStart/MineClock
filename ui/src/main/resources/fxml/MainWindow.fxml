@@ -36,7 +36,7 @@
     </ImageView>
 
     <VBox alignment="TOP_LEFT">
-        <TitleBar title="MineClock" prefHeight="30">
+        <TitleBar title="MineClock">
             <Button fx:id="portraitButton" onAction="#onPortrait" text="&#xf066;" />
             <Button fx:id="landscapeButton" onAction="#onLandscape" text="&#xf065;" visible="false" />
         </TitleBar>
