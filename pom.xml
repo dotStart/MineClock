@@ -7,7 +7,7 @@
     <!-- Artifact Information -->
     <groupId>rocks.spud.minecraft.mineclock</groupId>
     <artifactId>parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -256,7 +256,7 @@
                                     <artifactItem>
                                         <groupId>rocks.spud.minecraft.mineclock</groupId>
                                         <artifactId>attach</artifactId>
-                                        <version>${project.version}</version>
+                                        <version>1.0-SNAPSHOT</version>
                                         <type>jar</type>
                                         <classifier>shaded</classifier>
 
