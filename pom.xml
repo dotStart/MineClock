@@ -131,7 +131,7 @@
                     <configuration>
                         <sourceDirectory>${project.basedir}/src/main/less</sourceDirectory>
                         <outputDirectory>${project.build.outputDirectory}/style</outputDirectory>
-                        <compress>true</compress>
+                        <compress>false</compress>
                     </configuration>
 
                     <executions>
