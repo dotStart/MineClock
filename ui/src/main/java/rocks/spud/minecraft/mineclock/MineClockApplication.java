@@ -148,6 +148,11 @@ public class MineClockApplication extends Application {
      */
     @Override
     public void start(@Nonnull final Stage primaryStage) throws Exception {
+        Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
+            reportError(e);
+            System.exit(-1);
+        });
+
         this.injector = Guice.createInjector((b) -> {
             b.bind(MineClockApplication.class).toInstance(this);
             b.bind(Stage.class).toInstance(primaryStage);
