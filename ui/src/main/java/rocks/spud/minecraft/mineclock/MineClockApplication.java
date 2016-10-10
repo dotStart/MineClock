@@ -140,6 +140,7 @@ public class MineClockApplication extends Application {
         expContent.add(textArea, 0, 1);
 
         alert.getDialogPane().setExpandableContent(expContent);
+        throwable.printStackTrace();
         alert.showAndWait();
     }
 
