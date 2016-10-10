@@ -256,6 +256,7 @@ public class MainWindowController implements Initializable {
         });
     }
 
+    // <editor-fold desc="Event Handlers">
     @FXML
     private void onPortrait(@Nonnull ActionEvent event) {
         this.root.getScene().getWindow().setWidth(400);
@@ -321,4 +322,5 @@ public class MainWindowController implements Initializable {
     private void onSetMidnight(@Nonnull ActionEvent event) {
         this.setCycleTime(0.75);
     }
+    // </editor-fold>
 }
