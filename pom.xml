@@ -291,6 +291,7 @@
                                 <headerType>gui</headerType>
                                 <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
                                 <jar>${project.build.finalName}.jar</jar>
+                                <icon>${project.basedir}/src/main/resources/image/application.ico</icon>
                                 <dontWrapJar>true</dontWrapJar>
                                 <errTitle>MineClock</errTitle>
 
