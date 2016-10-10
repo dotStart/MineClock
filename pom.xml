@@ -176,9 +176,12 @@
                             <index>true</index>
 
                             <manifest>
-                                <addDefaultImplementationEntries>true
-                                </addDefaultImplementationEntries>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             </manifest>
+
+                            <manifestEntries>
+                                <Implementation-Version>${project.version} (r${buildNumber})</Implementation-Version>
+                            </manifestEntries>
                         </archive>
                     </configuration>
                 </plugin>
