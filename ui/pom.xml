@@ -17,12 +17,6 @@
 
   <!-- Dependencies -->
   <dependencies>
-    <!-- Modules -->
-    <dependency>
-      <groupId>rocks.spud.minecraft.mineclock</groupId>
-      <artifactId>attach</artifactId>
-    </dependency>
-
     <!-- Utilities -->
     <dependency>
       <groupId>com.google.inject</groupId>
