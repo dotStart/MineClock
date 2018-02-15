@@ -122,6 +122,8 @@ public class WorldStateClient {
 
       this.channel.close().awaitUninterruptibly();
       this.eventLoopGroup.shutdownGracefully().awaitUninterruptibly();
+
+      this.channel = null;
     } finally {
       this.lock.unlock();
     }
