@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -66,16 +69,26 @@ public class MainWindowController implements Initializable {
    */
   private static final Duration CYCLE_TIME = Duration.minutes(20);
 
+  /**
+   * Defines the total amount of time that has to pass between now and the last synchronization
+   * packet before the application no longer considers itself to be application controlled.
+   */
+  private static final java.time.Duration SYNCHRONIZATION_EXPIRATION_DURATION = java.time.Duration
+      .ofMinutes(1);
+
   public static final double TIMELINE_POSITION_EVENING = 0.5;
   public static final double TIMELINE_POSITION_MIDNIGHT = 0.75;
   public static final double TIMELINE_POSITION_MORNING = 0;
   public static final double TIMELINE_POSITION_NIGHT = 0.25;
 
+  private final Injector injector;
   private final ConfigurationService configurationService;
 
   private final Rotate cycleRotation = new Rotate(-90, 960, 960);
   private final Timeline cycleTimeline = new Timeline();
-  private final Injector injector;
+
+  private final Timer synchronizationTimer = new Timer(true);
+  private Instant lastSynchronizationTimestamp = Instant.EPOCH;
 
   // <editor-fold desc="FXML Elements">
   @FXML
@@ -85,7 +98,6 @@ public class MainWindowController implements Initializable {
 
   @FXML
   private Label attachmentLabel;
-  private Instant attachmentUpdateTime;
   @FXML
   private ImageView backgroundDay;
   @FXML
@@ -134,6 +146,8 @@ public class MainWindowController implements Initializable {
 
       this.time.setText(String.format("%02d:%02d %s", hours, minutes, (pm ? "PM" : "AM")));
     });
+
+    this.synchronizationTimer.schedule(new SynchronizationTask(), 1000, 2000);
   }
 
   /**
@@ -207,6 +221,40 @@ public class MainWindowController implements Initializable {
         this.onPortrait(null);
       });
     }
+  }
+
+  /**
+   * Refreshes the current synchronization state.
+   */
+  public void refreshSynchronization() {
+    this.lastSynchronizationTimestamp = Instant.now();
+
+    if (this.controls.getOpacity() == 1.0) {
+      FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.controls);
+      fadeOutTransition.setFromValue(1.0);
+      fadeOutTransition.setToValue(0.0);
+      fadeOutTransition.play();
+
+      FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.attachmentLabel);
+      fadeInTransition.setFromValue(0.0);
+      fadeInTransition.setToValue(1.0);
+      fadeInTransition.play();
+    }
+
+    // TODO: Rain
+    /*
+    if (message.isRaining() && this.rainLabel.getOpacity() == 0.0) {
+      FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
+      fadeInTransition.setFromValue(0.0);
+      fadeInTransition.setToValue(1.0);
+      fadeInTransition.play();
+    } else if (!message.isRaining() && this.rainLabel.getOpacity() == 1.0) {
+      FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
+      fadeOutTransition.setFromValue(1.0);
+      fadeOutTransition.setToValue(0.0);
+      fadeOutTransition.play();
+    }
+    */
   }
 
   /**
@@ -307,6 +355,50 @@ public class MainWindowController implements Initializable {
       stage.show();
     } catch (IOException ex) {
       throw new RuntimeException("Could not access settings window: " + ex.getMessage(), ex);
+    }
+  }
+
+  /**
+   * Re-Evaluates the synchronization state of the application on a regular basis.
+   */
+  private class SynchronizationTask extends TimerTask {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void run() {
+      Platform.runLater(() -> {
+
+        Instant expirationTimestamp = MainWindowController.this.lastSynchronizationTimestamp
+            .plus(SYNCHRONIZATION_EXPIRATION_DURATION);
+
+        if (expirationTimestamp.isBefore(Instant.now())) {
+          if (MainWindowController.this.attachmentLabel.getOpacity() == 1.0) {
+            FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2),
+                MainWindowController.this.attachmentLabel);
+            fadeOutTransition.setFromValue(1.0);
+            fadeOutTransition.setToValue(0.0);
+            fadeOutTransition.play();
+          }
+
+          if (MainWindowController.this.rainLabel.getOpacity() == 1.0) {
+            FadeTransition rainFadeOutTransition = new FadeTransition(Duration.seconds(2),
+                MainWindowController.this.rainLabel);
+            rainFadeOutTransition.setFromValue(1.0);
+            rainFadeOutTransition.setToValue(0.0);
+            rainFadeOutTransition.play();
+          }
+
+          if (MainWindowController.this.controls.getOpacity() == 0.0) {
+            FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2),
+                MainWindowController.this.controls);
+            fadeInTransition.setFromValue(0.0);
+            fadeInTransition.setToValue(1.0);
+            fadeInTransition.play();
+          }
+        }
+      });
     }
   }
   // </editor-fold>
