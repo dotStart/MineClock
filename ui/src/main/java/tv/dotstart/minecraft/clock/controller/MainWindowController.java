@@ -54,14 +54,29 @@ import tv.dotstart.minecraft.clock.service.ConfigurationService;
  */
 public class MainWindowController implements Initializable {
 
-  private static final java.time.Duration ATTACHMENT_EXPIRATION_DURATION = java.time.Duration
-      .ofSeconds(20);
+  /**
+   * Defines the total amount of time a single day/night cycle takes (assuming that the server is
+   * not lagging at the moment).
+   */
   private static final Duration CYCLE_TIME = Duration.minutes(20);
+
+  public static final double TIMELINE_POSITION_EVENING = 0.5;
+  public static final double TIMELINE_POSITION_MIDNIGHT = 0.75;
+  public static final double TIMELINE_POSITION_MORNING = 0;
+  public static final double TIMELINE_POSITION_NIGHT = 0.25;
+
   private final ConfigurationService configurationService;
 
   private final Rotate cycleRotation = new Rotate(-90, 960, 960);
   private final Timeline cycleTimeline = new Timeline();
   private final Injector injector;
+
+  // <editor-fold desc="FXML Elements">
+  @FXML
+  private StackPane root;
+  @FXML
+  private Label time;
+
   @FXML
   private Label attachmentLabel;
   private Instant attachmentUpdateTime;
@@ -83,11 +98,6 @@ public class MainWindowController implements Initializable {
   private Button portraitButton;
   @FXML
   private Label rainLabel;
-  // <editor-fold desc="FXML Elements">
-  @FXML
-  private StackPane root;
-  @FXML
-  private Label time;
   // </editor-fold>
 
   @Inject
@@ -193,6 +203,20 @@ public class MainWindowController implements Initializable {
     }
   }
 
+  /**
+   * Sets the cycle time based on a percentage.
+   *
+   * @param percentage a percentage.
+   */
+  public void setCycleTime(@Nonnegative double percentage) {
+    this.cycleTimeline.jumpTo(CYCLE_TIME.multiply(percentage));
+  }
+
+  // <editor-fold desc="Event Handlers">
+
+  /**
+   * Switches the application into landscape mode.
+   */
   @FXML
   private void onLandscape(@Nonnull ActionEvent event) {
     this.root.getScene().getWindow().setWidth(960);
@@ -201,6 +225,9 @@ public class MainWindowController implements Initializable {
     this.landscapeButton.setVisible(false);
   }
 
+  /**
+   * Switches the application to portrait mode.
+   */
   @FXML
   private void onPortrait(@Nonnull ActionEvent event) {
     this.root.getScene().getWindow().setWidth(400);
@@ -209,27 +236,42 @@ public class MainWindowController implements Initializable {
     this.portraitButton.setVisible(false);
   }
 
+  /**
+   * Adjusts the time to the predefined evening time (e.g. half of the day/night cycle has been
+   * completed).
+   */
   @FXML
   private void onSetEvening(@Nonnull ActionEvent event) {
-    this.setCycleTime(0.5);
+    this.setCycleTime(TIMELINE_POSITION_EVENING);
   }
 
+  /**
+   * Adjusts the time to the predefined midnight time (e.g. 75% of the day/night cycle has been
+   * completed).
+   */
   @FXML
   private void onSetMidnight(@Nonnull ActionEvent event) {
-    this.setCycleTime(0.75);
+    this.setCycleTime(TIMELINE_POSITION_MIDNIGHT);
   }
 
+  /**
+   * Adjusts the time to the predefined sunrise time (e.g. 0% of the day/night cycle has been
+   * completed).
+   */
   @FXML
   private void onSetMorning(@Nonnull ActionEvent event) {
-    this.setCycleTime(0);
+    this.setCycleTime(TIMELINE_POSITION_MORNING);
   }
 
+  /**
+   * Adjusts the time to the predefined noon time (e.g. 25% of the day/night cycle has been
+   * completed).
+   */
   @FXML
   private void onSetNoon(@Nonnull ActionEvent event) {
-    this.setCycleTime(0.25);
+    this.setCycleTime(TIMELINE_POSITION_NIGHT);
   }
 
-  // <editor-fold desc="Event Handlers">
   @FXML
   private void onSettings(@Nonnull ActionEvent event) {
     try {
@@ -247,15 +289,6 @@ public class MainWindowController implements Initializable {
     } catch (IOException ex) {
       throw new RuntimeException("Could not access settings window: " + ex.getMessage(), ex);
     }
-  }
-
-  /**
-   * Sets the cycle time based on a percentage.
-   *
-   * @param percentage a percentage.
-   */
-  private void setCycleTime(@Nonnegative double percentage) {
-    this.cycleTimeline.jumpTo(CYCLE_TIME.multiply(percentage));
   }
   // </editor-fold>
 }
