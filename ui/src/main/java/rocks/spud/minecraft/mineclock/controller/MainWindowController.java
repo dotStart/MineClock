@@ -17,18 +17,12 @@
 package rocks.spud.minecraft.mineclock.controller;
 
 import com.google.inject.Injector;
-
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import javax.annotation.Nonnegative;
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -50,6 +44,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import rocks.spud.minecraft.mineclock.attach.MinecraftAttachment;
 import rocks.spud.minecraft.mineclock.attach.agent.common.ClockMessage;
 import rocks.spud.minecraft.mineclock.attach.agent.common.ClockProtocol;
@@ -62,285 +59,305 @@ import rocks.spud.minecraft.mineclock.service.ConfigurationService;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MainWindowController implements Initializable {
-    private static final Duration CYCLE_TIME = Duration.minutes(20);
-    private static final java.time.Duration ATTACHMENT_EXPIRATION_DURATION = java.time.Duration.ofSeconds(20);
 
-    private final Injector injector;
-    private final ConfigurationService configurationService;
+  private static final java.time.Duration ATTACHMENT_EXPIRATION_DURATION = java.time.Duration
+      .ofSeconds(20);
+  private static final Duration CYCLE_TIME = Duration.minutes(20);
+  private final Timer attachmentTimer;
+  private final ConfigurationService configurationService;
 
-    private final Rotate cycleRotation = new Rotate(-90, 960, 960);
-    private final Timeline cycleTimeline = new Timeline();
+  private final Rotate cycleRotation = new Rotate(-90, 960, 960);
+  private final Timeline cycleTimeline = new Timeline();
+  private final Injector injector;
+  private final MinecraftAttachment minecraftAttachment;
+  private final ClockProtocol protocol;
+  @FXML
+  private Label attachmentLabel;
+  private Instant attachmentUpdateTime;
+  @FXML
+  private ImageView backgroundDay;
+  @FXML
+  private ImageView backgroundEvening;
+  @FXML
+  private ImageView backgroundMorning;
+  @FXML
+  private ImageView backgroundNight;
+  @FXML
+  private HBox controls;
+  @FXML
+  private ImageView cycle;
+  @FXML
+  private Button landscapeButton;
+  @FXML
+  private Button portraitButton;
+  @FXML
+  private Label rainLabel;
+  // <editor-fold desc="FXML Elements">
+  @FXML
+  private StackPane root;
+  @FXML
+  private Label time;
+  // </editor-fold>
 
-    private final ClockProtocol protocol;
-    private final MinecraftAttachment minecraftAttachment;
-    private final Timer attachmentTimer;
-    private Instant attachmentUpdateTime;
+  @Inject
+  public MainWindowController(@Nonnull Injector injector,
+      @Nonnull ConfigurationService configurationService) {
+    this.injector = injector;
+    this.configurationService = configurationService;
 
-    // <editor-fold desc="FXML Elements">
-    @FXML
-    private StackPane root;
-    @FXML
-    private Button portraitButton;
-    @FXML
-    private Button landscapeButton;
+    this.cycleTimeline.setCycleCount(Animation.INDEFINITE);
+    this.cycleTimeline.getKeyFrames()
+        .add(new KeyFrame(CYCLE_TIME, new KeyValue(this.cycleRotation.angleProperty(), 270)));
 
-    @FXML
-    private ImageView cycle;
-    @FXML
-    private ImageView backgroundDay;
-    @FXML
-    private ImageView backgroundEvening;
-    @FXML
-    private ImageView backgroundMorning;
-    @FXML
-    private ImageView backgroundNight;
+    this.cycleTimeline.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+      int totalSeconds = (int) (24000 * (newValue.toSeconds() / CYCLE_TIME.toSeconds()));
 
-    @FXML
-    private Label time;
-    @FXML
-    private Label rainLabel;
+      int hours = 6 + (totalSeconds / 1000);
+      int minutes = (totalSeconds % 1000) / 17;
+      boolean pm = false;
 
-    @FXML
-    private HBox controls;
-    @FXML
-    private Label attachmentLabel;
-    // </editor-fold>
+      if (hours >= 24) {
+        hours %= 24;
+      } else if (hours > 12) {
+        hours %= 12;
+        pm = true;
+      } else if (hours == 12 && minutes > 0) {
+        pm = true;
+      }
 
-    @Inject
-    public MainWindowController(@Nonnull Injector injector, @Nonnull ConfigurationService configurationService) {
-        this.injector = injector;
-        this.configurationService = configurationService;
+      this.time.setText(String.format("%02d:%02d %s", hours, minutes, (pm ? "PM" : "AM")));
+    });
 
-        this.cycleTimeline.setCycleCount(Animation.INDEFINITE);
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME, new KeyValue(this.cycleRotation.angleProperty(), 270)));
+    if (MinecraftAttachment.isAvailable()) {
+      this.protocol = new ClockProtocol(this::onClockUpdate);
+      this.protocol.listen();
 
-        this.cycleTimeline.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
-            int totalSeconds = (int) (24000 * (newValue.toSeconds() / CYCLE_TIME.toSeconds()));
+      this.minecraftAttachment = MinecraftAttachment.getAttachment();
 
-            int hours = 6 + (totalSeconds / 1000);
-            int minutes = (totalSeconds % 1000) / 17;
-            boolean pm = false;
-
-            if (hours >= 24) {
-                hours %= 24;
-            } else if (hours > 12) {
-                hours %= 12;
-                pm = true;
-            } else if (hours == 12 && minutes > 0) {
-                pm = true;
-            }
-
-            this.time.setText(String.format("%02d:%02d %s", hours, minutes, (pm ? "PM" : "AM")));
-        });
-
-        if (MinecraftAttachment.isAvailable()) {
-            this.protocol = new ClockProtocol(this::onClockUpdate);
-            this.protocol.listen();
-
-            this.minecraftAttachment = MinecraftAttachment.getAttachment();
-
-            this.attachmentTimer = new Timer(true);
-            this.attachmentTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Platform.runLater(() -> {
-                        if (attachmentUpdateTime != null && attachmentUpdateTime.plus(ATTACHMENT_EXPIRATION_DURATION).isBefore(Instant.now())) {
-                            if (attachmentLabel.getOpacity() == 1.0) {
-                                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), attachmentLabel);
-                                fadeOutTransition.setFromValue(1.0);
-                                fadeOutTransition.setToValue(0.0);
-                                fadeOutTransition.play();
-                            }
-
-                            if (rainLabel.getOpacity() == 1.0) {
-                                FadeTransition rainFadeOutTransition = new FadeTransition(Duration.seconds(2), rainLabel);
-                                rainFadeOutTransition.setFromValue(1.0);
-                                rainFadeOutTransition.setToValue(0.0);
-                                rainFadeOutTransition.play();
-                            }
-
-                            if (controls.getOpacity() == 0.0) {
-                                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), controls);
-                                fadeInTransition.setFromValue(0.0);
-                                fadeInTransition.setToValue(1.0);
-                                fadeInTransition.play();
-                            }
-                        }
-                    });
-
-                    if (configurationService.isAutomaticallyAttach()) {
-                        minecraftAttachment.refresh();
-                    }
-                }
-            }, 1000, 2000);
-        } else {
-            this.protocol = null;
-            this.minecraftAttachment = null;
-            this.attachmentTimer = null;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Button Switching
-        this.portraitButton.managedProperty().bind(this.portraitButton.visibleProperty());
-        this.landscapeButton.managedProperty().bind(this.landscapeButton.visibleProperty());
-
-        this.portraitButton.visibleProperty().addListener((ob, o, n) -> {
-            if (this.landscapeButton.isVisible() == n) {
-                this.landscapeButton.setVisible(!n);
-            }
-        });
-
-        this.landscapeButton.visibleProperty().addListener((ob, o, n) -> {
-            if (this.portraitButton.isVisible() == n) {
-                this.portraitButton.setVisible(!n);
-            }
-        });
-
-        // Morning
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(this.backgroundMorning.opacityProperty(), 1)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.125), new KeyValue(this.backgroundMorning.opacityProperty(), 0)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.875), new KeyValue(this.backgroundMorning.opacityProperty(), 0)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(1), new KeyValue(this.backgroundMorning.opacityProperty(), 1)));
-
-        // Full Day
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(this.backgroundDay.opacityProperty(), 0)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.125), new KeyValue(this.backgroundDay.opacityProperty(), 1)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.375), new KeyValue(this.backgroundDay.opacityProperty(), 1)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.625), new KeyValue(this.backgroundDay.opacityProperty(), 0)));
-
-        // Evening
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.375), new KeyValue(this.backgroundEvening.opacityProperty(), 0)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.5), new KeyValue(this.backgroundEvening.opacityProperty(), 1)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.625), new KeyValue(this.backgroundEvening.opacityProperty(), 0)));
-
-        // Night
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.5), new KeyValue(this.backgroundNight.opacityProperty(), 0)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.625), new KeyValue(this.backgroundNight.opacityProperty(), 1)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.875), new KeyValue(this.backgroundNight.opacityProperty(), 1)));
-        this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME, new KeyValue(this.backgroundNight.opacityProperty(), 0)));
-
-        // apply transformation
-        this.cycle.getTransforms().add(this.cycleRotation);
-
-        this.cycleTimeline.play();
-
-        // Switch to Portrait if requested
-        if (this.configurationService.isLaunchPortraitMode()) {
-            Platform.runLater(() -> {
-                // noinspection ConstantConditions
-                this.onPortrait(null);
-            });
-        }
-    }
-
-    /**
-     * Sets the cycle time based on a percentage.
-     *
-     * @param percentage a percentage.
-     */
-    private void setCycleTime(@Nonnegative double percentage) {
-        this.cycleTimeline.jumpTo(CYCLE_TIME.multiply(percentage));
-    }
-
-    /**
-     * Handles clock updates from an attached virtual machine.
-     */
-    private void onClockUpdate(@Nonnull final ClockMessage message) {
-        Platform.runLater(() -> {
-            // We will actively ignore attachment packets while attachment is disabled to give the
-            // impression of the effects immediately applying to the application
-            if (!this.configurationService.isAutomaticallyAttach()) {
-                return;
-            }
-
-            this.attachmentUpdateTime = Instant.now();
-
-            if (this.controls.getOpacity() == 1.0) {
-                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.controls);
+      this.attachmentTimer = new Timer(true);
+      this.attachmentTimer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          Platform.runLater(() -> {
+            if (attachmentUpdateTime != null && attachmentUpdateTime
+                .plus(ATTACHMENT_EXPIRATION_DURATION).isBefore(Instant.now())) {
+              if (attachmentLabel.getOpacity() == 1.0) {
+                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2),
+                    attachmentLabel);
                 fadeOutTransition.setFromValue(1.0);
                 fadeOutTransition.setToValue(0.0);
                 fadeOutTransition.play();
+              }
 
-                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.attachmentLabel);
+              if (rainLabel.getOpacity() == 1.0) {
+                FadeTransition rainFadeOutTransition = new FadeTransition(Duration.seconds(2),
+                    rainLabel);
+                rainFadeOutTransition.setFromValue(1.0);
+                rainFadeOutTransition.setToValue(0.0);
+                rainFadeOutTransition.play();
+              }
+
+              if (controls.getOpacity() == 0.0) {
+                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), controls);
                 fadeInTransition.setFromValue(0.0);
                 fadeInTransition.setToValue(1.0);
                 fadeInTransition.play();
+              }
             }
+          });
 
-            if (message.isRaining() && this.configurationService.isDisplayWeather() && this.rainLabel.getOpacity() == 0.0) {
-                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-                fadeInTransition.setFromValue(0.0);
-                fadeInTransition.setToValue(1.0);
-                fadeInTransition.play();
-            } else if ((!message.isRaining() || !this.configurationService.isDisplayWeather()) && this.rainLabel.getOpacity() == 1.0) {
-                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-                fadeOutTransition.setFromValue(1.0);
-                fadeOutTransition.setToValue(0.0);
-                fadeOutTransition.play();
-            }
-
-            this.cycleTimeline.jumpTo(CYCLE_TIME.multiply((message.getWorldTime() / 24000.0d)));
-        });
-    }
-
-    // <editor-fold desc="Event Handlers">
-    @FXML
-    private void onSettings(@Nonnull ActionEvent event) {
-        try {
-            Scene scene = new Scene(this.injector.getInstance(FXMLLoader.class).load(this.getClass().getResourceAsStream("/fxml/SettingsWindow.fxml")));
-
-            Stage stage = new Stage(StageStyle.UNDECORATED);
-            stage.initOwner(this.root.getScene().getWindow());
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.setScene(scene);
-            stage.setWidth(500);
-            stage.setHeight(500);
-
-            stage.show();
-        } catch (IOException ex) {
-            throw new RuntimeException("Could not access settings window: " + ex.getMessage(), ex);
+          if (configurationService.isAutomaticallyAttach()) {
+            minecraftAttachment.refresh();
+          }
         }
+      }, 1000, 2000);
+    } else {
+      this.protocol = null;
+      this.minecraftAttachment = null;
+      this.attachmentTimer = null;
     }
+  }
 
-    @FXML
-    private void onPortrait(@Nonnull ActionEvent event) {
-        this.root.getScene().getWindow().setWidth(400);
-        this.root.getStyleClass().add("portrait");
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Button Switching
+    this.portraitButton.managedProperty().bind(this.portraitButton.visibleProperty());
+    this.landscapeButton.managedProperty().bind(this.landscapeButton.visibleProperty());
 
-        this.portraitButton.setVisible(false);
+    this.portraitButton.visibleProperty().addListener((ob, o, n) -> {
+      if (this.landscapeButton.isVisible() == n) {
+        this.landscapeButton.setVisible(!n);
+      }
+    });
+
+    this.landscapeButton.visibleProperty().addListener((ob, o, n) -> {
+      if (this.portraitButton.isVisible() == n) {
+        this.portraitButton.setVisible(!n);
+      }
+    });
+
+    // Morning
+    this.cycleTimeline.getKeyFrames().add(
+        new KeyFrame(Duration.ZERO, new KeyValue(this.backgroundMorning.opacityProperty(), 1)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.125),
+        new KeyValue(this.backgroundMorning.opacityProperty(), 0)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.875),
+        new KeyValue(this.backgroundMorning.opacityProperty(), 0)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(1),
+        new KeyValue(this.backgroundMorning.opacityProperty(), 1)));
+
+    // Full Day
+    this.cycleTimeline.getKeyFrames()
+        .add(new KeyFrame(Duration.ZERO, new KeyValue(this.backgroundDay.opacityProperty(), 0)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.125),
+        new KeyValue(this.backgroundDay.opacityProperty(), 1)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.375),
+        new KeyValue(this.backgroundDay.opacityProperty(), 1)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.625),
+        new KeyValue(this.backgroundDay.opacityProperty(), 0)));
+
+    // Evening
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.375),
+        new KeyValue(this.backgroundEvening.opacityProperty(), 0)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.5),
+        new KeyValue(this.backgroundEvening.opacityProperty(), 1)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.625),
+        new KeyValue(this.backgroundEvening.opacityProperty(), 0)));
+
+    // Night
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.5),
+        new KeyValue(this.backgroundNight.opacityProperty(), 0)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.625),
+        new KeyValue(this.backgroundNight.opacityProperty(), 1)));
+    this.cycleTimeline.getKeyFrames().add(new KeyFrame(CYCLE_TIME.multiply(0.875),
+        new KeyValue(this.backgroundNight.opacityProperty(), 1)));
+    this.cycleTimeline.getKeyFrames()
+        .add(new KeyFrame(CYCLE_TIME, new KeyValue(this.backgroundNight.opacityProperty(), 0)));
+
+    // apply transformation
+    this.cycle.getTransforms().add(this.cycleRotation);
+
+    this.cycleTimeline.play();
+
+    // Switch to Portrait if requested
+    if (this.configurationService.isLaunchPortraitMode()) {
+      Platform.runLater(() -> {
+        // noinspection ConstantConditions
+        this.onPortrait(null);
+      });
     }
+  }
 
-    @FXML
-    private void onLandscape(@Nonnull ActionEvent event) {
-        this.root.getScene().getWindow().setWidth(960);
-        this.root.getStyleClass().remove("portrait");
+  /**
+   * Handles clock updates from an attached virtual machine.
+   */
+  private void onClockUpdate(@Nonnull final ClockMessage message) {
+    Platform.runLater(() -> {
+      // We will actively ignore attachment packets while attachment is disabled to give the
+      // impression of the effects immediately applying to the application
+      if (!this.configurationService.isAutomaticallyAttach()) {
+        return;
+      }
 
-        this.landscapeButton.setVisible(false);
+      this.attachmentUpdateTime = Instant.now();
+
+      if (this.controls.getOpacity() == 1.0) {
+        FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.controls);
+        fadeOutTransition.setFromValue(1.0);
+        fadeOutTransition.setToValue(0.0);
+        fadeOutTransition.play();
+
+        FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2),
+            this.attachmentLabel);
+        fadeInTransition.setFromValue(0.0);
+        fadeInTransition.setToValue(1.0);
+        fadeInTransition.play();
+      }
+
+      if (message.isRaining() && this.configurationService.isDisplayWeather()
+          && this.rainLabel.getOpacity() == 0.0) {
+        FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
+        fadeInTransition.setFromValue(0.0);
+        fadeInTransition.setToValue(1.0);
+        fadeInTransition.play();
+      } else if ((!message.isRaining() || !this.configurationService.isDisplayWeather())
+          && this.rainLabel.getOpacity() == 1.0) {
+        FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
+        fadeOutTransition.setFromValue(1.0);
+        fadeOutTransition.setToValue(0.0);
+        fadeOutTransition.play();
+      }
+
+      this.cycleTimeline.jumpTo(CYCLE_TIME.multiply((message.getWorldTime() / 24000.0d)));
+    });
+  }
+
+  @FXML
+  private void onLandscape(@Nonnull ActionEvent event) {
+    this.root.getScene().getWindow().setWidth(960);
+    this.root.getStyleClass().remove("portrait");
+
+    this.landscapeButton.setVisible(false);
+  }
+
+  @FXML
+  private void onPortrait(@Nonnull ActionEvent event) {
+    this.root.getScene().getWindow().setWidth(400);
+    this.root.getStyleClass().add("portrait");
+
+    this.portraitButton.setVisible(false);
+  }
+
+  @FXML
+  private void onSetEvening(@Nonnull ActionEvent event) {
+    this.setCycleTime(0.5);
+  }
+
+  @FXML
+  private void onSetMidnight(@Nonnull ActionEvent event) {
+    this.setCycleTime(0.75);
+  }
+
+  @FXML
+  private void onSetMorning(@Nonnull ActionEvent event) {
+    this.setCycleTime(0);
+  }
+
+  @FXML
+  private void onSetNoon(@Nonnull ActionEvent event) {
+    this.setCycleTime(0.25);
+  }
+
+  // <editor-fold desc="Event Handlers">
+  @FXML
+  private void onSettings(@Nonnull ActionEvent event) {
+    try {
+      Scene scene = new Scene(this.injector.getInstance(FXMLLoader.class)
+          .load(this.getClass().getResourceAsStream("/fxml/SettingsWindow.fxml")));
+
+      Stage stage = new Stage(StageStyle.UNDECORATED);
+      stage.initOwner(this.root.getScene().getWindow());
+      stage.initModality(Modality.WINDOW_MODAL);
+      stage.setScene(scene);
+      stage.setWidth(500);
+      stage.setHeight(500);
+
+      stage.show();
+    } catch (IOException ex) {
+      throw new RuntimeException("Could not access settings window: " + ex.getMessage(), ex);
     }
+  }
 
-    @FXML
-    private void onSetMorning(@Nonnull ActionEvent event) {
-        this.setCycleTime(0);
-    }
-
-    @FXML
-    private void onSetNoon(@Nonnull ActionEvent event) {
-        this.setCycleTime(0.25);
-    }
-
-    @FXML
-    private void onSetEvening(@Nonnull ActionEvent event) {
-        this.setCycleTime(0.5);
-    }
-
-    @FXML
-    private void onSetMidnight(@Nonnull ActionEvent event) {
-        this.setCycleTime(0.75);
-    }
-    // </editor-fold>
+  /**
+   * Sets the cycle time based on a percentage.
+   *
+   * @param percentage a percentage.
+   */
+  private void setCycleTime(@Nonnegative double percentage) {
+    this.cycleTimeline.jumpTo(CYCLE_TIME.multiply(percentage));
+  }
+  // </editor-fold>
 }

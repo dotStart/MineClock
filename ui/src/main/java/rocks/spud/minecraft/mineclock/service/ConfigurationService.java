@@ -24,13 +24,11 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
-
-import javax.inject.Singleton;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javax.inject.Singleton;
 import rocks.spud.minecraft.mineclock.MineClockApplication;
 
 /**
@@ -41,110 +39,116 @@ import rocks.spud.minecraft.mineclock.MineClockApplication;
  */
 @Singleton
 public class ConfigurationService {
-    private final BooleanProperty launchPortraitMode = new SimpleBooleanProperty();
-    private final BooleanProperty automaticallyAttach = new SimpleBooleanProperty();
-    private final BooleanProperty displayWeather = new SimpleBooleanProperty();
-    private final Properties properties = new Properties();
 
-    public ConfigurationService() {
-        this.loadConfiguration();
+  private final BooleanProperty automaticallyAttach = new SimpleBooleanProperty();
+  private final BooleanProperty displayWeather = new SimpleBooleanProperty();
+  private final BooleanProperty launchPortraitMode = new SimpleBooleanProperty();
+  private final Properties properties = new Properties();
 
-        // Hook Changes
-        ConfigurationChangeListener listener = new ConfigurationChangeListener();
+  public ConfigurationService() {
+    this.loadConfiguration();
 
-        this.launchPortraitMode.addListener(listener);
-        this.automaticallyAttach.addListener(listener);
-        this.displayWeather.addListener(listener);
+    // Hook Changes
+    ConfigurationChangeListener listener = new ConfigurationChangeListener();
+
+    this.launchPortraitMode.addListener(listener);
+    this.automaticallyAttach.addListener(listener);
+    this.displayWeather.addListener(listener);
+  }
+
+  public BooleanProperty automaticallyAttachProperty() {
+    return automaticallyAttach;
+  }
+
+  public BooleanProperty displayWeatherProperty() {
+    return displayWeather;
+  }
+
+  private Path getConfigurationPath() {
+    return MineClockApplication.getApplicationDirectory().resolve("application.conf");
+  }
+
+  public boolean isAutomaticallyAttach() {
+    return automaticallyAttach.get();
+  }
+
+  public void setAutomaticallyAttach(boolean automaticallyAttach) {
+    this.automaticallyAttach.set(automaticallyAttach);
+  }
+
+  public boolean isDisplayWeather() {
+    return displayWeather.get();
+  }
+
+  public void setDisplayWeather(boolean displayWeather) {
+    this.displayWeather.set(displayWeather);
+  }
+
+  // <editor-fold desc="Getters and Setters">
+  public boolean isLaunchPortraitMode() {
+    return launchPortraitMode.get();
+  }
+
+  public void setLaunchPortraitMode(boolean launchPortraitMode) {
+    this.launchPortraitMode.set(launchPortraitMode);
+  }
+
+  public BooleanProperty launchPortraitModeProperty() {
+    return launchPortraitMode;
+  }
+
+  private void loadConfiguration() {
+    Path configurationFile = this.getConfigurationPath();
+
+    if (Files.notExists(configurationFile)) {
+      this.automaticallyAttach.set(true);
+      this.displayWeather.set(true);
+
+      this.saveConfiguration();
+      return;
     }
 
-    private Path getConfigurationPath() {
-        return MineClockApplication.getApplicationDirectory().resolve("application.conf");
+    try (InputStream inputStream = new FileInputStream(configurationFile.toFile())) {
+      this.properties.loadFromXML(inputStream);
+    } catch (IOException ex) {
+      throw new RuntimeException(
+          "Could not load application configuration file: " + ex.getMessage(), ex);
     }
 
-    private void loadConfiguration() {
-        Path configurationFile = this.getConfigurationPath();
+    this.launchPortraitMode.set(Boolean.valueOf(this.properties.getProperty("launch-in-portrait")));
+    this.automaticallyAttach
+        .set(Boolean.valueOf(this.properties.getProperty("automatically-attach")));
+    this.displayWeather.set(Boolean.valueOf(this.properties.getProperty("display-weather")));
+  }
 
-        if (Files.notExists(configurationFile)) {
-            this.automaticallyAttach.set(true);
-            this.displayWeather.set(true);
+  private void saveConfiguration() {
+    this.properties
+        .setProperty("launch-in-portrait", Boolean.toString(this.launchPortraitMode.get()));
+    this.properties.setProperty("automatically-attach",
+        Boolean.toString(this.automaticallyAttachProperty().get()));
+    this.properties.setProperty("display-weather", Boolean.toString(this.displayWeather.get()));
 
-            this.saveConfiguration();
-            return;
-        }
-
-        try (InputStream inputStream = new FileInputStream(configurationFile.toFile())) {
-            this.properties.loadFromXML(inputStream);
-        } catch (IOException ex) {
-            throw new RuntimeException("Could not load application configuration file: " + ex.getMessage(), ex);
-        }
-
-        this.launchPortraitMode.set(Boolean.valueOf(this.properties.getProperty("launch-in-portrait")));
-        this.automaticallyAttach.set(Boolean.valueOf(this.properties.getProperty("automatically-attach")));
-        this.displayWeather.set(Boolean.valueOf(this.properties.getProperty("display-weather")));
+    try (OutputStream outputStream = new FileOutputStream(this.getConfigurationPath().toFile())) {
+      this.properties.storeToXML(outputStream, "MineClock Configuration File - DO NOT EDIT");
+    } catch (IOException ex) {
+      throw new RuntimeException("Could not store application configuration: " + ex.getMessage(),
+          ex);
     }
+  }
+  // </editor-fold>
 
-    private void saveConfiguration() {
-        this.properties.setProperty("launch-in-portrait", Boolean.toString(this.launchPortraitMode.get()));
-        this.properties.setProperty("automatically-attach", Boolean.toString(this.automaticallyAttachProperty().get()));
-        this.properties.setProperty("display-weather", Boolean.toString(this.displayWeather.get()));
-
-        try (OutputStream outputStream = new FileOutputStream(this.getConfigurationPath().toFile())) {
-            this.properties.storeToXML(outputStream, "MineClock Configuration File - DO NOT EDIT");
-        } catch (IOException ex) {
-            throw new RuntimeException("Could not store application configuration: " + ex.getMessage(), ex);
-        }
-    }
-
-    // <editor-fold desc="Getters and Setters">
-    public boolean isLaunchPortraitMode() {
-        return launchPortraitMode.get();
-    }
-
-    public void setLaunchPortraitMode(boolean launchPortraitMode) {
-        this.launchPortraitMode.set(launchPortraitMode);
-    }
-
-    public BooleanProperty launchPortraitModeProperty() {
-        return launchPortraitMode;
-    }
-
-    public boolean isAutomaticallyAttach() {
-        return automaticallyAttach.get();
-    }
-
-    public void setAutomaticallyAttach(boolean automaticallyAttach) {
-        this.automaticallyAttach.set(automaticallyAttach);
-    }
-
-    public BooleanProperty automaticallyAttachProperty() {
-        return automaticallyAttach;
-    }
-
-    public boolean isDisplayWeather() {
-        return displayWeather.get();
-    }
-
-    public void setDisplayWeather(boolean displayWeather) {
-        this.displayWeather.set(displayWeather);
-    }
-
-    public BooleanProperty displayWeatherProperty() {
-        return displayWeather;
-    }
-    // </editor-fold>
+  /**
+   * Provides a change listener which automatically updates the local version of the configuration
+   * file in order to keep it in sync with user preferences represented within the application.
+   */
+  private class ConfigurationChangeListener implements ChangeListener {
 
     /**
-     * Provides a change listener which automatically updates the local version of the configuration
-     * file in order to keep it in sync with user preferences represented within the application.
+     * {@inheritDoc}
      */
-    private class ConfigurationChangeListener implements ChangeListener {
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-            saveConfiguration();
-        }
+    @Override
+    public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+      saveConfiguration();
     }
+  }
 }

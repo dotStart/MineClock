@@ -26,26 +26,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class ClockMessage {
-    private final long worldTime;
-    private final long worldAge;
-    private final boolean raining;
 
-    @JsonCreator
-    public ClockMessage(@JsonProperty("worldTime") long worldTime, @JsonProperty("worldAge") long worldAge, @JsonProperty("raining") boolean raining) {
-        this.worldTime = worldTime;
-        this.worldAge = worldAge;
-        this.raining = raining;
-    }
+  private final boolean raining;
+  private final long worldAge;
+  private final long worldTime;
 
-    public long getWorldTime() {
-        return this.worldTime;
-    }
+  @JsonCreator
+  public ClockMessage(@JsonProperty("worldTime") long worldTime,
+      @JsonProperty("worldAge") long worldAge, @JsonProperty("raining") boolean raining) {
+    this.worldTime = worldTime;
+    this.worldAge = worldAge;
+    this.raining = raining;
+  }
 
-    public long getWorldAge() {
-        return this.worldAge;
-    }
+  public long getWorldAge() {
+    return this.worldAge;
+  }
 
-    public boolean isRaining() {
-        return this.raining;
-    }
+  public long getWorldTime() {
+    return this.worldTime;
+  }
+
+  public boolean isRaining() {
+    return this.raining;
+  }
 }

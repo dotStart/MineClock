@@ -15,19 +15,21 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.control.Button?>
-<fx:root xmlns:fx="http://javafx.com/fxml" type="rocks.spud.minecraft.mineclock.control.TitleBar" styleClass="titleBar" onMousePressed="#onMousePressed" onMouseDragged="#onMouseDragged">
-    <Label fx:id="titleLabel" styleClass="title" />
+<?import rocks.spud.minecraft.mineclock.control.TitleBar?>
+<fx:root xmlns:fx="http://javafx.com/fxml" onMouseDragged="#onMouseDragged"
+  onMousePressed="#onMousePressed" styleClass="titleBar" type="rocks.spud.minecraft.mineclock.control.TitleBar">
+  <Label styleClass="title" fx:id="titleLabel"/>
 
-    <Pane HBox.hgrow="ALWAYS" />
+  <Pane HBox.hgrow="ALWAYS"/>
 
-    <HBox styleClass="actions">
-        <HBox fx:id="buttons" styleClass="additional-actions" />
+  <HBox styleClass="actions">
+    <HBox styleClass="additional-actions" fx:id="buttons"/>
 
-        <Button fx:id="iconifyButton" onAction="#onIconify" styleClass="iconify" text="&#xf070;" />
-        <Button fx:id="closeButton" onAction="#onClose" styleClass="close" text="&#xf00d;" />
-    </HBox>
+    <Button onAction="#onIconify" styleClass="iconify" text="&#xf070;" fx:id="iconifyButton"/>
+    <Button onAction="#onClose" styleClass="close" text="&#xf00d;" fx:id="closeButton"/>
+  </HBox>
 </fx:root>

@@ -20,7 +20,6 @@ import com.sun.tools.attach.AgentInitializationException;
 import com.sun.tools.attach.AgentLoadException;
 import com.sun.tools.attach.AttachNotSupportedException;
 import com.sun.tools.attach.VirtualMachine;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,42 +34,46 @@ import java.util.List;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 class ToolsMinecraftAttachment implements MinecraftAttachment {
-    private final List<String> machineIds = new ArrayList<>();
 
-    ToolsMinecraftAttachment() {
-    }
+  private final List<String> machineIds = new ArrayList<>();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void refresh() {
-        VirtualMachine.list().stream()
-                .filter((d) -> !this.machineIds.contains(d.id()) && d.displayName().startsWith("net.minecraft.client.main.Main"))
-                .findAny()
-                .ifPresent((d) -> {
-                    try {
-                        String path = Paths.get("lib", "rocks.spud.minecraft.mineclock.attach.jar").toAbsolutePath().toString();
+  ToolsMinecraftAttachment() {
+  }
 
-                        if (System.getProperty("development-mode") != null) {
-                            System.err.println("Relying on maven generated jar in working directory!");
-                            path = Paths.get("attach/target/rocks.spud.minecraft.mineclock.attach-shaded.jar").toAbsolutePath().toString();
-                        }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void refresh() {
+    VirtualMachine.list().stream()
+        .filter((d) -> !this.machineIds.contains(d.id()) && d.displayName()
+            .startsWith("net.minecraft.client.main.Main"))
+        .findAny()
+        .ifPresent((d) -> {
+          try {
+            String path = Paths.get("lib", "rocks.spud.minecraft.mineclock.attach.jar")
+                .toAbsolutePath().toString();
 
-                        System.out.println("Attaching to VM using agent from " + path);
+            if (System.getProperty("development-mode") != null) {
+              System.err.println("Relying on maven generated jar in working directory!");
+              path = Paths.get("attach/target/rocks.spud.minecraft.mineclock.attach-shaded.jar")
+                  .toAbsolutePath().toString();
+            }
 
-                        VirtualMachine vm = d.provider().attachVirtualMachine(d);
-                        vm.loadAgent(path);
-                        vm.detach();
+            System.out.println("Attaching to VM using agent from " + path);
 
-                        this.machineIds.add(d.id());
-                    } catch (AttachNotSupportedException | IOException ex) {
-                        System.err.println("Attaching not supported or failed: " + ex.getMessage());
-                        ex.printStackTrace();
-                    } catch (AgentLoadException | AgentInitializationException ex) {
-                        System.err.println("Could not load or initialize agent: " + ex.getMessage());
-                        ex.printStackTrace();
-                    }
-                });
-    }
+            VirtualMachine vm = d.provider().attachVirtualMachine(d);
+            vm.loadAgent(path);
+            vm.detach();
+
+            this.machineIds.add(d.id());
+          } catch (AttachNotSupportedException | IOException ex) {
+            System.err.println("Attaching not supported or failed: " + ex.getMessage());
+            ex.printStackTrace();
+          } catch (AgentLoadException | AgentInitializationException ex) {
+            System.err.println("Could not load or initialize agent: " + ex.getMessage());
+            ex.printStackTrace();
+          }
+        });
+  }
 }

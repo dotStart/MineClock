@@ -19,9 +19,6 @@ package rocks.spud.minecraft.mineclock.control;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javax.annotation.Nonnull;
-
 import javafx.application.Platform;
 import javafx.beans.DefaultProperty;
 import javafx.beans.binding.Bindings;
@@ -42,6 +39,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javax.annotation.Nonnull;
 
 /**
  * Provides a specialized control which replicates a standard title bar which allows users to drag a
@@ -51,153 +49,152 @@ import javafx.stage.Stage;
  */
 @DefaultProperty("additionalButtons")
 public class TitleBar extends HBox implements Initializable {
-    private final StringProperty title = new SimpleStringProperty("Test");
-    private final BooleanProperty minimizable = new SimpleBooleanProperty(true);
-    private final BooleanProperty closeable = new SimpleBooleanProperty(true);
-    private final BooleanProperty closesApplication = new SimpleBooleanProperty(false);
-    private final ObservableList<Node> additionalButtons = FXCollections.observableArrayList();
 
-    // <editor-fold desc="Window Dragging">
-    private double initialX;
-    private double initialY;
-    // </editor-fold>
+  private final ObservableList<Node> additionalButtons = FXCollections.observableArrayList();
+  private final BooleanProperty closeable = new SimpleBooleanProperty(true);
+  private final BooleanProperty closesApplication = new SimpleBooleanProperty(false);
+  private final BooleanProperty minimizable = new SimpleBooleanProperty(true);
+  private final StringProperty title = new SimpleStringProperty("Test");
+  @FXML
+  private HBox buttons = new HBox();
+  @FXML
+  private Button closeButton = new Button("\uf00d");
+  // </editor-fold>
+  @FXML
+  private Button iconifyButton = new Button("\uf070");
+  // <editor-fold desc="Window Dragging">
+  private double initialX;
+  private double initialY;
+  // <editor-fold desc="FXML Elements">
+  @FXML
+  private Label titleLabel = new Label();
+  // </editor-fold>
 
-    // <editor-fold desc="FXML Elements">
-    @FXML
-    private Label titleLabel = new Label();
-    @FXML
-    private HBox buttons = new HBox();
-    @FXML
-    private Button iconifyButton = new Button("\uf070");
-    @FXML
-    private Button closeButton = new Button("\uf00d");
-    // </editor-fold>
+  public TitleBar() {
+    FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/control/TitleBar.fxml"));
+    loader.setRoot(this);
+    loader.setController(this);
 
-    public TitleBar() {
-        FXMLLoader loader = new FXMLLoader(this.getClass().getResource("/fxml/control/TitleBar.fxml"));
-        loader.setRoot(this);
-        loader.setController(this);
-
-        try {
-            loader.load();
-        } catch (IOException ex) {
-            throw new RuntimeException("Could not load TitleBar: " + ex.getMessage(), ex);
-        }
+    try {
+      loader.load();
+    } catch (IOException ex) {
+      throw new RuntimeException("Could not load TitleBar: " + ex.getMessage(), ex);
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initialize(@Nonnull URL location, ResourceBundle resources) {
-        this.titleLabel.textProperty().bind(this.title);
+  @Nonnull
+  public BooleanProperty closeableProperty() {
+    return closeable;
+  }
 
-        this.iconifyButton.visibleProperty().bind(this.minimizableProperty());
-        this.iconifyButton.managedProperty().bind(this.iconifyButton.visibleProperty());
+  @Nonnull
+  public BooleanProperty closesApplicationProperty() {
+    return closesApplication;
+  }
 
-        this.closeButton.visibleProperty().bind(this.closeableProperty());
-        this.closeButton.managedProperty().bind(this.closeButton.visibleProperty());
+  @Nonnull
+  public ObservableList<Node> getAdditionalButtons() {
+    return this.additionalButtons;
+  }
 
-        // Note: This is a dirty fix which works around FXMLLoader assuming that we mean to include
-        // contents declared in TitleBar.fxml as part of our additional buttons
-        this.getChildren().addAll(this.additionalButtons);
-        this.additionalButtons.clear();
+  // <editor-fold desc="Getters & Setters">
+  public String getTitle() {
+    return title.get();
+  }
 
-        Bindings.bindContent(this.buttons.getChildren(), this.additionalButtons);
+  public void setTitle(String title) {
+    this.title.set(title);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void initialize(@Nonnull URL location, ResourceBundle resources) {
+    this.titleLabel.textProperty().bind(this.title);
+
+    this.iconifyButton.visibleProperty().bind(this.minimizableProperty());
+    this.iconifyButton.managedProperty().bind(this.iconifyButton.visibleProperty());
+
+    this.closeButton.visibleProperty().bind(this.closeableProperty());
+    this.closeButton.managedProperty().bind(this.closeButton.visibleProperty());
+
+    // Note: This is a dirty fix which works around FXMLLoader assuming that we mean to include
+    // contents declared in TitleBar.fxml as part of our additional buttons
+    this.getChildren().addAll(this.additionalButtons);
+    this.additionalButtons.clear();
+
+    Bindings.bindContent(this.buttons.getChildren(), this.additionalButtons);
+  }
+
+  public boolean isCloseable() {
+    return closeable.get();
+  }
+
+  public void setCloseable(boolean closeable) {
+    this.closeable.set(closeable);
+  }
+
+  public boolean isClosesApplication() {
+    return closesApplication.get();
+  }
+
+  public void setClosesApplication(boolean closesApplication) {
+    this.closesApplication.set(closesApplication);
+  }
+
+  public boolean isMinimizable() {
+    return minimizable.get();
+  }
+
+  public void setMinimizable(boolean minimizable) {
+    this.minimizable.set(minimizable);
+  }
+
+  @Nonnull
+  public BooleanProperty minimizableProperty() {
+    return minimizable;
+  }
+
+  @FXML
+  private void onClose(@Nonnull ActionEvent event) {
+    if (this.closesApplicationProperty().get()) {
+      Platform.exit();
+    } else {
+      ((Stage) this.getScene().getWindow()).close();
     }
+  }
+  // </editor-fold>
 
-    // <editor-fold desc="Getters & Setters">
-    public String getTitle() {
-        return title.get();
-    }
+  // <editor-fold desc="Event Handlers">
+  @FXML
+  private void onIconify(@Nonnull ActionEvent event) {
+    ((Stage) this.getScene().getWindow()).setIconified(true);
+  }
 
-    public void setTitle(String title) {
-        this.title.set(title);
+  @FXML
+  private void onMouseDragged(@Nonnull MouseEvent event) {
+    if (event.getButton() != MouseButton.MIDDLE) {
+      this.getScene().getWindow().setX(event.getScreenX() - initialX);
+      this.getScene().getWindow().setY(event.getScreenY() - initialY);
     }
+  }
 
-    @Nonnull
-    public StringProperty titleProperty() {
-        return title;
+  @FXML
+  private void onMousePressed(@Nonnull MouseEvent event) {
+    if (event.getButton() != MouseButton.MIDDLE) {
+      initialX = event.getSceneX();
+      initialY = event.getSceneY();
+    } else {
+      this.getScene().getWindow().centerOnScreen();
+      initialX = this.getScene().getWindow().getX();
+      initialY = this.getScene().getWindow().getY();
     }
+  }
 
-    public boolean isMinimizable() {
-        return minimizable.get();
-    }
-
-    public void setMinimizable(boolean minimizable) {
-        this.minimizable.set(minimizable);
-    }
-
-    @Nonnull
-    public BooleanProperty minimizableProperty() {
-        return minimizable;
-    }
-
-    public boolean isCloseable() {
-        return closeable.get();
-    }
-
-    public void setCloseable(boolean closeable) {
-        this.closeable.set(closeable);
-    }
-
-    @Nonnull
-    public BooleanProperty closeableProperty() {
-        return closeable;
-    }
-
-    public boolean isClosesApplication() {
-        return closesApplication.get();
-    }
-
-    public void setClosesApplication(boolean closesApplication) {
-        this.closesApplication.set(closesApplication);
-    }
-
-    @Nonnull
-    public BooleanProperty closesApplicationProperty() {
-        return closesApplication;
-    }
-
-    @Nonnull
-    public ObservableList<Node> getAdditionalButtons() {
-        return this.additionalButtons;
-    }
-    // </editor-fold>
-
-    // <editor-fold desc="Event Handlers">
-    @FXML
-    private void onIconify(@Nonnull ActionEvent event) {
-        ((Stage) this.getScene().getWindow()).setIconified(true);
-    }
-
-    @FXML
-    private void onMousePressed(@Nonnull MouseEvent event) {
-        if (event.getButton() != MouseButton.MIDDLE) {
-            initialX = event.getSceneX();
-            initialY = event.getSceneY();
-        } else {
-            this.getScene().getWindow().centerOnScreen();
-            initialX = this.getScene().getWindow().getX();
-            initialY = this.getScene().getWindow().getY();
-        }
-    }
-
-    @FXML
-    private void onMouseDragged(@Nonnull MouseEvent event) {
-        if (event.getButton() != MouseButton.MIDDLE) {
-            this.getScene().getWindow().setX(event.getScreenX() - initialX);
-            this.getScene().getWindow().setY(event.getScreenY() - initialY);
-        }
-    }
-
-    @FXML
-    private void onClose(@Nonnull ActionEvent event) {
-        if (this.closesApplicationProperty().get()) {
-            Platform.exit();
-        } else {
-            ((Stage) this.getScene().getWindow()).close();
-        }
-    }
-    // </editor-fold>
+  @Nonnull
+  public StringProperty titleProperty() {
+    return title;
+  }
+  // </editor-fold>
 }

@@ -25,32 +25,32 @@ import javax.annotation.Nonnull;
  */
 public interface MinecraftAttachment {
 
-    /**
-     * Checks whether the attachment is available in the current environment.
-     *
-     * @return true if available, false otherwise.
-     */
-    static boolean isAvailable() {
-        try {
-            Class.forName("com.sun.tools.attach.VirtualMachine");
-            return true;
-        } catch (ClassNotFoundException ex) {
-            return false;
-        }
-    }
+  /**
+   * Creates a new attachment instance.
+   *
+   * @return an attachment.
+   */
+  @Nonnull
+  static MinecraftAttachment getAttachment() {
+    return new ToolsMinecraftAttachment();
+  }
 
-    /**
-     * Creates a new attachment instance.
-     *
-     * @return an attachment.
-     */
-    @Nonnull
-    static MinecraftAttachment getAttachment() {
-        return new ToolsMinecraftAttachment();
+  /**
+   * Checks whether the attachment is available in the current environment.
+   *
+   * @return true if available, false otherwise.
+   */
+  static boolean isAvailable() {
+    try {
+      Class.forName("com.sun.tools.attach.VirtualMachine");
+      return true;
+    } catch (ClassNotFoundException ex) {
+      return false;
     }
+  }
 
-    /**
-     * Attaches to and instruments all new Minecraft instances.
-     */
-    void refresh();
+  /**
+   * Attaches to and instruments all new Minecraft instances.
+   */
+  void refresh();
 }

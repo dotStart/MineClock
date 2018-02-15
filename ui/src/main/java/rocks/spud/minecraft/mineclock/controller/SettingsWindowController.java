@@ -22,14 +22,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import javax.annotation.Nonnull;
-import javax.inject.Inject;
-
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import rocks.spud.minecraft.mineclock.MineClockApplication;
 import rocks.spud.minecraft.mineclock.service.ConfigurationService;
 
@@ -39,65 +37,71 @@ import rocks.spud.minecraft.mineclock.service.ConfigurationService;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class SettingsWindowController implements Initializable {
-    private final ConfigurationService configurationService;
 
-    @FXML
-    private CheckBox launchPortraitMode;
-    @FXML
-    private CheckBox automaticallyAttach;
-    @FXML
-    private CheckBox displayWeather;
-    @FXML
-    private Label versionLabel;
+  private final ConfigurationService configurationService;
+  @FXML
+  private CheckBox automaticallyAttach;
+  @FXML
+  private CheckBox displayWeather;
+  @FXML
+  private CheckBox launchPortraitMode;
+  @FXML
+  private Label versionLabel;
 
-    @Inject
-    public SettingsWindowController(@Nonnull ConfigurationService configurationService) {
-        this.configurationService = configurationService;
+  @Inject
+  public SettingsWindowController(@Nonnull ConfigurationService configurationService) {
+    this.configurationService = configurationService;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    // Settings Tab
+    this.launchPortraitMode.selectedProperty()
+        .bindBidirectional(this.configurationService.launchPortraitModeProperty());
+    this.automaticallyAttach.selectedProperty()
+        .bindBidirectional(this.configurationService.automaticallyAttachProperty());
+    this.displayWeather.selectedProperty()
+        .bindBidirectional(this.configurationService.displayWeatherProperty());
+
+    // About Tab
+    {
+      Package p = this.getClass().getPackage();
+      String version = (p == null ? null : p.getImplementationVersion());
+
+      this.versionLabel
+          .setText(String.format(this.versionLabel.getText(), (version == null ? "?" : version)));
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        // Settings Tab
-        this.launchPortraitMode.selectedProperty().bindBidirectional(this.configurationService.launchPortraitModeProperty());
-        this.automaticallyAttach.selectedProperty().bindBidirectional(this.configurationService.automaticallyAttachProperty());
-        this.displayWeather.selectedProperty().bindBidirectional(this.configurationService.displayWeatherProperty());
-
-        // About Tab
-        {
-            Package p = this.getClass().getPackage();
-            String version = (p == null ? null : p.getImplementationVersion());
-
-            this.versionLabel.setText(String.format(this.versionLabel.getText(), (version == null ? "?" : version)));
-        }
+  @FXML
+  private void onForums() {
+    try {
+      Desktop.getDesktop().browse(new URI(
+          "http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2746931"));
+    } catch (URISyntaxException | IOException ex) {
+      MineClockApplication.reportError(ex);
     }
+  }
 
-    @FXML
-    private void onOpenSourceInformation() {
-        try {
-            Desktop.getDesktop().browse(new URI("https://github.com/LordAkkarin/MineClock/wiki/ThirdPartyLicenses"));
-        } catch (URISyntaxException | IOException ex) {
-            MineClockApplication.reportError(ex);
-        }
+  @FXML
+  private void onOpenSourceInformation() {
+    try {
+      Desktop.getDesktop()
+          .browse(new URI("https://github.com/LordAkkarin/MineClock/wiki/ThirdPartyLicenses"));
+    } catch (URISyntaxException | IOException ex) {
+      MineClockApplication.reportError(ex);
     }
+  }
 
-    @FXML
-    private void onSource() {
-        try {
-            Desktop.getDesktop().browse(new URI("https://github.com/LordAkkarin/MineClock"));
-        } catch (URISyntaxException | IOException ex) {
-            MineClockApplication.reportError(ex);
-        }
+  @FXML
+  private void onSource() {
+    try {
+      Desktop.getDesktop().browse(new URI("https://github.com/LordAkkarin/MineClock"));
+    } catch (URISyntaxException | IOException ex) {
+      MineClockApplication.reportError(ex);
     }
-
-    @FXML
-    private void onForums() {
-        try {
-            Desktop.getDesktop().browse(new URI("http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-tools/2746931"));
-        } catch (URISyntaxException | IOException ex) {
-            MineClockApplication.reportError(ex);
-        }
-    }
+  }
 }

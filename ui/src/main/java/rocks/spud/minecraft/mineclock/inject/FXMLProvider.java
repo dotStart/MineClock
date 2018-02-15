@@ -17,14 +17,11 @@
 package rocks.spud.minecraft.mineclock.inject;
 
 import com.google.inject.Injector;
-
 import java.nio.charset.StandardCharsets;
-
+import javafx.fxml.FXMLLoader;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import javax.inject.Provider;
-
-import javafx.fxml.FXMLLoader;
 
 /**
  * Provides a factory for instances of {@link FXMLLoader} which have been augmented with Guice to
@@ -36,21 +33,22 @@ import javafx.fxml.FXMLLoader;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class FXMLProvider implements Provider<FXMLLoader> {
-    private final Injector injector;
 
-    @Inject
-    public FXMLProvider(@Nonnull Injector injector) {
-        this.injector = injector;
-    }
+  private final Injector injector;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FXMLLoader get() {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setCharset(StandardCharsets.UTF_8);
-        loader.setControllerFactory(this.injector::getInstance);
-        return loader;
-    }
+  @Inject
+  public FXMLProvider(@Nonnull Injector injector) {
+    this.injector = injector;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public FXMLLoader get() {
+    FXMLLoader loader = new FXMLLoader();
+    loader.setCharset(StandardCharsets.UTF_8);
+    loader.setControllerFactory(this.injector::getInstance);
+    return loader;
+  }
 }
