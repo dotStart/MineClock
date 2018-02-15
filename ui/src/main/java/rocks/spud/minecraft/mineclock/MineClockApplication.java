@@ -43,7 +43,14 @@ import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
  */
 public class MineClockApplication extends Application {
 
-  private Injector injector;
+  private final Injector injector;
+
+  public MineClockApplication() {
+    this.injector = Guice.createInjector((b) -> {
+      b.bind(MineClockApplication.class).toInstance(this);
+      b.bind(FXMLLoader.class).toProvider(FXMLProvider.class);
+    });
+  }
 
   /**
    * Retrieves the path to a systems specific storage directory.
@@ -84,6 +91,7 @@ public class MineClockApplication extends Application {
    * Displays a dialog which reports an unexpected exception to a user in a way that allows them to
    * easily report it.
    */
+  @SuppressWarnings("CallToPrintStackTrace")
   public static void reportError(@Nonnull Throwable throwable) {
     Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.initModality(Modality.APPLICATION_MODAL);
@@ -129,12 +137,6 @@ public class MineClockApplication extends Application {
 
     primaryStage.getIcons()
         .add(new Image(this.getClass().getResourceAsStream("/image/application.png")));
-
-    this.injector = Guice.createInjector((b) -> {
-      b.bind(MineClockApplication.class).toInstance(this);
-      b.bind(Stage.class).toInstance(primaryStage);
-      b.bind(FXMLLoader.class).toProvider(FXMLProvider.class);
-    });
 
     primaryStage.initStyle(StageStyle.UNDECORATED);
     primaryStage.setResizable(false);
