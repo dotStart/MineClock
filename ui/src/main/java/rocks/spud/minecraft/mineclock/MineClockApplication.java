@@ -45,6 +45,8 @@ import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
  */
 public class MineClockApplication extends Application {
 
+  public static final int DEFAULT_WINDOW_WIDTH = 960;
+  public static final int DEFAULT_WINDOW_HEIGHT = 540;
   private final Injector injector;
 
   public MineClockApplication() {
@@ -142,8 +144,8 @@ public class MineClockApplication extends Application {
 
     primaryStage.initStyle(StageStyle.UNDECORATED);
     primaryStage.setResizable(false);
-    primaryStage.setWidth(960);
-    primaryStage.setHeight(540);
+    primaryStage.setWidth(DEFAULT_WINDOW_WIDTH);
+    primaryStage.setHeight(DEFAULT_WINDOW_HEIGHT);
 
     FXMLLoader loader = this.injector.getInstance(FXMLLoader.class);
     Scene scene = new Scene(
