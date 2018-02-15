@@ -40,9 +40,9 @@
 
   <scm>
     <tag>master</tag>
-    <url>https://github.com/LordAkkarin/MineClock</url>
-    <connection>scm:git:git@github.com:/LordAkkarin/MineClock.git</connection>
-    <developerConnection>scm:git:git@github.com:/LordAkkarin/MineClock.git</developerConnection>
+    <url>https://github.com/dotStart/MineClock</url>
+    <connection>scm:git:git@github.com:/dotStart/MineClock.git</connection>
+    <developerConnection>scm:git:git@github.com:/dotStart/MineClock.git</developerConnection>
   </scm>
 
   <!-- Dependencies -->

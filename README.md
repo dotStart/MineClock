@@ -1,6 +1,6 @@
-[![License](https://img.shields.io/github/license/LordAkkarin/MineClock.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.txt)
-[![Latest Tag](https://img.shields.io/github/tag/LordAkkarin/MineClock.svg?style=flat-square&label=Latest Tag)](https://github.com/LordAkkarin/MineClock/tags)
-[![Latest Release](https://img.shields.io/github/release/LordAkkarin/MineClock.svg?style=flat-square&label=Latest Release)](https://github.com/LordAkkarin/MineClock/releases)
+[![License](https://img.shields.io/github/license/dotStart/MineClock.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+[![Latest Tag](https://img.shields.io/github/tag/dotStart/MineClock.svg?style=flat-square&label=Latest Tag)](https://github.com/dotStart/MineClock/tags)
+[![Latest Release](https://img.shields.io/github/release/dotStart/MineClock.svg?style=flat-square&label=Latest Release)](https://github.com/dotStart/MineClock/releases)
 
 MineClock
 =========
@@ -33,7 +33,7 @@ Contacts
 --------
 
 * [IRC #Akkarin on EsperNet](http://webchat.esper.net/?channels=Akkarin)
-* [GitHub](https://github.com/LordAkkarin/MineClock)
+* [GitHub](https://github.com/dotStart/MineClock)
 
 License
 -------
@@ -44,15 +44,15 @@ Copyright (C) 2016 Johannes "Akkarin" Donath and other copyright owners as docum
 Downloads
 ---------
 
-Released versions of the library can be found on [GitHub](https://github.com/LordAkkarin/MineClock/releases).
+Released versions of the library can be found on [GitHub](https://github.com/dotStart/MineClock/releases).
 
 Issues
 ------
 
 You encountered problems with the library or have a suggestion? Create an issue!
 
-1. Make sure your issue has not been fixed in a newer version (check the list of [closed issues](https://github.com/LordAkkarin/MineClock/issues?q=is%3Aissue+is%3Aclosed)
-1. Create [a new issue](https://github.com/LordAkkarin/MineClock/issues/new) from the [issues page](https://github.com/LordAkkarin/MineClock/issues)
+1. Make sure your issue has not been fixed in a newer version (check the list of [closed issues](https://github.com/dotStart/MineClock/issues?q=is%3Aissue+is%3Aclosed)
+1. Create [a new issue](https://github.com/dotStart/MineClock/issues/new) from the [issues page](https://github.com/dotStart/MineClock/issues)
 1. Enter your issue's title (something that summarizes your issue) and create a detailed description containing:
    - What is the expected result?
    - What problem occurs?
@@ -63,7 +63,7 @@ You encountered problems with the library or have a suggestion? Create an issue!
 Building
 --------
 
-1. Clone this repository via ```git clone https://github.com/LordAkkarin/MineClock.git``` or download a [zip](https://github.com/LordAkkarin/MineClock/archive/master.zip)
+1. Clone this repository via ```git clone https://github.com/dotStart/MineClock.git``` or download a [zip](https://github.com/dotStart/MineClock/archive/master.zip)
 1. Build the modification by running ```mvn clean package```
 1. The resulting jars can be found in their respective ```target``` directories as well as your local maven repository
 
