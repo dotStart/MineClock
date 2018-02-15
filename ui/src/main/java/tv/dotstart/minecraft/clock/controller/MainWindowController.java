@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Johannes Donath <johannesd@torchmind.com>
+ * Copyright 2018 Johannes Donath <johannesd@torchmind.com>
  * and other copyright owners as documented in the project's IP log.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rocks.spud.minecraft.mineclock.controller;
+package tv.dotstart.minecraft.clock.controller;
 
 import com.google.inject.Injector;
 import java.io.IOException;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ResourceBundle;
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -47,7 +44,7 @@ import javafx.util.Duration;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import rocks.spud.minecraft.mineclock.service.ConfigurationService;
+import tv.dotstart.minecraft.clock.service.ConfigurationService;
 
 /**
  * Provides a main application controller which handles the functionality declared in {@code

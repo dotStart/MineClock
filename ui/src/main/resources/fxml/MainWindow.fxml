@@ -9,10 +9,10 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import rocks.spud.minecraft.mineclock.control.TitleBar?>
+<?import tv.dotstart.minecraft.clock.control.TitleBar?>
 <StackPane xmlns:fx="http://javafx.com/fxml" alignment="TOP_CENTER"
   maxHeight="540" maxWidth="960"
-  minHeight="540" minWidth="960" styleClass="window" fx:controller="rocks.spud.minecraft.mineclock.controller.MainWindowController" fx:id="root">
+  minHeight="540" minWidth="960" styleClass="window" fx:controller="tv.dotstart.minecraft.clock.controller.MainWindowController" fx:id="root">
   <stylesheets>
     <URL value="@/style/Window.css"/>
     <URL value="@/style/MainWindow.css"/>

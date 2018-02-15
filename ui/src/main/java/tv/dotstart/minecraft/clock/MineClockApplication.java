@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Johannes Donath <johannesd@torchmind.com>
+ * Copyright 2018 Johannes Donath <johannesd@torchmind.com>
  * and other copyright owners as documented in the project's IP log.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rocks.spud.minecraft.mineclock;
+package tv.dotstart.minecraft.clock;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -36,7 +36,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.annotation.Nonnull;
-import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
+import tv.dotstart.minecraft.clock.inject.FXMLProvider;
 
 /**
  * Provides an entry point to the JavaFX application.

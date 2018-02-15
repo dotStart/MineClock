@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Johannes Donath <johannesd@torchmind.com>
+ * Copyright 2018 Johannes Donath <johannesd@torchmind.com>
  * and other copyright owners as documented in the project's IP log.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rocks.spud.minecraft.mineclock.inject;
+package tv.dotstart.minecraft.clock.inject;
 
 import com.google.inject.Injector;
 import java.nio.charset.StandardCharsets;

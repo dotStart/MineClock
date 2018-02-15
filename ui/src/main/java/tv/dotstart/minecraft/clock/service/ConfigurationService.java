@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Johannes Donath <johannesd@torchmind.com>
+ * Copyright 2018 Johannes Donath <johannesd@torchmind.com>
  * and other copyright owners as documented in the project's IP log.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rocks.spud.minecraft.mineclock.service;
+package tv.dotstart.minecraft.clock.service;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -29,7 +29,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javax.inject.Singleton;
-import rocks.spud.minecraft.mineclock.MineClockApplication;
+import tv.dotstart.minecraft.clock.MineClockApplication;
 
 /**
  * Provides a service which is capable of manging configuration properties and changes to said

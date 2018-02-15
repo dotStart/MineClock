@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Johannes Donath <johannesd@torchmind.com>
+ * Copyright 2018 Johannes Donath <johannesd@torchmind.com>
  * and other copyright owners as documented in the project's IP log.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package rocks.spud.minecraft.mineclock.controller;
+package tv.dotstart.minecraft.clock.controller;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -28,8 +28,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import rocks.spud.minecraft.mineclock.MineClockApplication;
-import rocks.spud.minecraft.mineclock.service.ConfigurationService;
+import tv.dotstart.minecraft.clock.MineClockApplication;
+import tv.dotstart.minecraft.clock.service.ConfigurationService;
 
 /**
  * Provides a handler for all functionality declared by {@code SettingsWindow.fxml}.

@@ -19,9 +19,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
-<?import rocks.spud.minecraft.mineclock.control.TitleBar?>
+<?import tv.dotstart.minecraft.clock.control.TitleBar?>
 <fx:root xmlns:fx="http://javafx.com/fxml" onMouseDragged="#onMouseDragged"
-  onMousePressed="#onMousePressed" styleClass="titleBar" type="rocks.spud.minecraft.mineclock.control.TitleBar">
+  onMousePressed="#onMousePressed" styleClass="titleBar" type="TitleBar">
   <Label styleClass="title" fx:id="titleLabel"/>
 
   <Pane HBox.hgrow="ALWAYS"/>

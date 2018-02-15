@@ -65,7 +65,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>rocks.spud.minecraft.mineclock.MineClockApplication</mainClass>
+                            <mainClass>tv.dotstart.minecraft.clock.MineClockApplication</mainClass>
                         </manifest>
 
                         <manifestEntries>

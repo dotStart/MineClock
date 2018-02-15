@@ -30,10 +30,10 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import rocks.spud.minecraft.mineclock.control.TitleBar?>
+<?import tv.dotstart.minecraft.clock.control.TitleBar?>
 <StackPane xmlns:fx="http://javafx.com/fxml" alignment="TOP_LEFT"
   styleClass="window"
-  fx:controller="rocks.spud.minecraft.mineclock.controller.SettingsWindowController" fx:id="root">
+  fx:controller="tv.dotstart.minecraft.clock.controller.SettingsWindowController" fx:id="root">
   <stylesheets>
     <URL value="@/style/Window.css"/>
   </stylesheets>
