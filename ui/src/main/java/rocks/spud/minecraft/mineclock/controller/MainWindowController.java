@@ -47,9 +47,6 @@ import javafx.util.Duration;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import rocks.spud.minecraft.mineclock.attach.MinecraftAttachment;
-import rocks.spud.minecraft.mineclock.attach.agent.common.ClockMessage;
-import rocks.spud.minecraft.mineclock.attach.agent.common.ClockProtocol;
 import rocks.spud.minecraft.mineclock.service.ConfigurationService;
 
 /**
@@ -63,14 +60,11 @@ public class MainWindowController implements Initializable {
   private static final java.time.Duration ATTACHMENT_EXPIRATION_DURATION = java.time.Duration
       .ofSeconds(20);
   private static final Duration CYCLE_TIME = Duration.minutes(20);
-  private final Timer attachmentTimer;
   private final ConfigurationService configurationService;
 
   private final Rotate cycleRotation = new Rotate(-90, 960, 960);
   private final Timeline cycleTimeline = new Timeline();
   private final Injector injector;
-  private final MinecraftAttachment minecraftAttachment;
-  private final ClockProtocol protocol;
   @FXML
   private Label attachmentLabel;
   private Instant attachmentUpdateTime;
@@ -127,55 +121,6 @@ public class MainWindowController implements Initializable {
 
       this.time.setText(String.format("%02d:%02d %s", hours, minutes, (pm ? "PM" : "AM")));
     });
-
-    if (MinecraftAttachment.isAvailable()) {
-      this.protocol = new ClockProtocol(this::onClockUpdate);
-      this.protocol.listen();
-
-      this.minecraftAttachment = MinecraftAttachment.getAttachment();
-
-      this.attachmentTimer = new Timer(true);
-      this.attachmentTimer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-          Platform.runLater(() -> {
-            if (attachmentUpdateTime != null && attachmentUpdateTime
-                .plus(ATTACHMENT_EXPIRATION_DURATION).isBefore(Instant.now())) {
-              if (attachmentLabel.getOpacity() == 1.0) {
-                FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2),
-                    attachmentLabel);
-                fadeOutTransition.setFromValue(1.0);
-                fadeOutTransition.setToValue(0.0);
-                fadeOutTransition.play();
-              }
-
-              if (rainLabel.getOpacity() == 1.0) {
-                FadeTransition rainFadeOutTransition = new FadeTransition(Duration.seconds(2),
-                    rainLabel);
-                rainFadeOutTransition.setFromValue(1.0);
-                rainFadeOutTransition.setToValue(0.0);
-                rainFadeOutTransition.play();
-              }
-
-              if (controls.getOpacity() == 0.0) {
-                FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), controls);
-                fadeInTransition.setFromValue(0.0);
-                fadeInTransition.setToValue(1.0);
-                fadeInTransition.play();
-              }
-            }
-          });
-
-          if (configurationService.isAutomaticallyAttach()) {
-            minecraftAttachment.refresh();
-          }
-        }
-      }, 1000, 2000);
-    } else {
-      this.protocol = null;
-      this.minecraftAttachment = null;
-      this.attachmentTimer = null;
-    }
   }
 
   /**
@@ -249,50 +194,6 @@ public class MainWindowController implements Initializable {
         this.onPortrait(null);
       });
     }
-  }
-
-  /**
-   * Handles clock updates from an attached virtual machine.
-   */
-  private void onClockUpdate(@Nonnull final ClockMessage message) {
-    Platform.runLater(() -> {
-      // We will actively ignore attachment packets while attachment is disabled to give the
-      // impression of the effects immediately applying to the application
-      if (!this.configurationService.isAutomaticallyAttach()) {
-        return;
-      }
-
-      this.attachmentUpdateTime = Instant.now();
-
-      if (this.controls.getOpacity() == 1.0) {
-        FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.controls);
-        fadeOutTransition.setFromValue(1.0);
-        fadeOutTransition.setToValue(0.0);
-        fadeOutTransition.play();
-
-        FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2),
-            this.attachmentLabel);
-        fadeInTransition.setFromValue(0.0);
-        fadeInTransition.setToValue(1.0);
-        fadeInTransition.play();
-      }
-
-      if (message.isRaining() && this.configurationService.isDisplayWeather()
-          && this.rainLabel.getOpacity() == 0.0) {
-        FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-        fadeInTransition.setFromValue(0.0);
-        fadeInTransition.setToValue(1.0);
-        fadeInTransition.play();
-      } else if ((!message.isRaining() || !this.configurationService.isDisplayWeather())
-          && this.rainLabel.getOpacity() == 1.0) {
-        FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-        fadeOutTransition.setFromValue(1.0);
-        fadeOutTransition.setToValue(0.0);
-        fadeOutTransition.play();
-      }
-
-      this.cycleTimeline.jumpTo(CYCLE_TIME.multiply((message.getWorldTime() / 24000.0d)));
-    });
   }
 
   @FXML

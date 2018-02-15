@@ -21,16 +21,9 @@ import com.google.inject.Injector;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -50,61 +43,7 @@ import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
  */
 public class MineClockApplication extends Application {
 
-  private static final String[] TOOLS_PATH_FORMATS = new String[]{"../lib/tools.jar",
-      "../Classes/classes.jar", "lib/tools.jar", "Classes/classes.jar"};
   private Injector injector;
-
-  /**
-   * Augments the bootstrap class loader using some reflection magic in order to dynamically append
-   * the JDK's tools.jar to the classpath when available.
-   */
-  private static void augmentBootstrapClassLoader() {
-    Map<String, String> environment = System.getenv();
-    Path jdkPath = null;
-    String toolsFormat = null;
-
-    for (String toolPathFormat : TOOLS_PATH_FORMATS) {
-      jdkPath = Paths.get(System.getProperty("java.home")).toAbsolutePath();
-      toolsFormat = toolPathFormat;
-      System.out.println("Checking " + jdkPath.toString() + " for valid JDK libraries");
-
-      if (Files.notExists(jdkPath.resolve(toolPathFormat)) && environment
-          .containsKey("JAVA_HOME")) {
-        jdkPath = Paths.get(environment.get("JAVA_HOME")).toAbsolutePath();
-        toolsFormat = toolPathFormat;
-        System.out.println("Checking " + jdkPath.toString() + " for valid JDK libraries");
-
-        if (Files.exists(jdkPath.resolve(toolPathFormat))) {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-
-    if (jdkPath != null && toolsFormat != null && Files.exists(jdkPath.resolve(toolsFormat))) {
-      System.out.println("Using JDK path: " + jdkPath.toString());
-
-      try {
-        URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-
-        // append tools.jar to class loader
-        Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-        method.setAccessible(true);
-        method.invoke(classLoader, jdkPath.resolve(toolsFormat).toUri().toURL());
-
-        // integrate natives
-        System.setProperty("java.library.path",
-            jdkPath.resolve("../jre/bin").toAbsolutePath().toString());
-        System.out.println(jdkPath.resolve("../jre/bin").toAbsolutePath().toString());
-
-        Field fieldSysPath = ClassLoader.class.getDeclaredField("sys_paths");
-        fieldSysPath.setAccessible(true);
-        fieldSysPath.set(null, null);
-      } catch (IllegalAccessException | InvocationTargetException | MalformedURLException | NoSuchFieldException | NoSuchMethodException ignore) {
-      }
-    }
-  }
 
   /**
    * Retrieves the path to a systems specific storage directory.
@@ -138,7 +77,6 @@ public class MineClockApplication extends Application {
   }
 
   public static void main(String[] arguments) {
-    augmentBootstrapClassLoader();
     launch(MineClockApplication.class, arguments);
   }
 
