@@ -1,6 +1,6 @@
 [![License](https://img.shields.io/github/license/dotStart/MineClock.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.txt)
-[![Latest Tag](https://img.shields.io/github/tag/dotStart/MineClock.svg?style=flat-square&label=Latest Tag)](https://github.com/dotStart/MineClock/tags)
-[![Latest Release](https://img.shields.io/github/release/dotStart/MineClock.svg?style=flat-square&label=Latest Release)](https://github.com/dotStart/MineClock/releases)
+[![GitHub Release](https://img.shields.io/github/release/dotStart/MineClock.svg?style=flat-square)](https://github.com/dotStart/MineClock/releases)
+[![CircleCI](https://img.shields.io/circleci/project/github/dotStart/MineClock.svg?style=flat-square)](https://circleci.com/gh/dotStart/MineClock)
 
 MineClock
 =========
