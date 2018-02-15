@@ -62,8 +62,8 @@
         <Button onAction="#onSetEvening" text="Evening"/>
         <Button onAction="#onSetMidnight" text="Midnight"/>
       </HBox>
-      <Label alignment="BOTTOM_CENTER" opacity="0.0" styleClass="attached" text="Attached"
-        fx:id="attachmentLabel"/>
+      <Label alignment="BOTTOM_CENTER" opacity="0.0" styleClass="synchronized" text="Synchronized"
+        fx:id="synchronizationLabel"/>
     </VBox>
   </VBox>
 </StackPane>

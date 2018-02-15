@@ -97,7 +97,7 @@ public class MainWindowController implements Initializable {
   private Label time;
 
   @FXML
-  private Label attachmentLabel;
+  private Label synchronizationLabel;
   @FXML
   private ImageView backgroundDay;
   @FXML
@@ -235,7 +235,7 @@ public class MainWindowController implements Initializable {
       fadeOutTransition.setToValue(0.0);
       fadeOutTransition.play();
 
-      FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.attachmentLabel);
+      FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.synchronizationLabel);
       fadeInTransition.setFromValue(0.0);
       fadeInTransition.setToValue(1.0);
       fadeInTransition.play();
@@ -374,9 +374,9 @@ public class MainWindowController implements Initializable {
             .plus(SYNCHRONIZATION_EXPIRATION_DURATION);
 
         if (expirationTimestamp.isBefore(Instant.now())) {
-          if (MainWindowController.this.attachmentLabel.getOpacity() == 1.0) {
+          if (MainWindowController.this.synchronizationLabel.getOpacity() == 1.0) {
             FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2),
-                MainWindowController.this.attachmentLabel);
+                MainWindowController.this.synchronizationLabel);
             fadeOutTransition.setFromValue(1.0);
             fadeOutTransition.setToValue(0.0);
             fadeOutTransition.play();
