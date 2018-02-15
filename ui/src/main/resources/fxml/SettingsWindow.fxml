@@ -56,8 +56,8 @@
             <Label GridPane.columnIndex="0" GridPane.rowIndex="0" text="Launch in Portrait Mode"/>
             <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="launchPortraitMode"/>
 
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="1" text="Automatically Attach"/>
-            <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="automaticallyAttach"/>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1" text="Permit Time Synchronization"/>
+            <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="allowSynchronization"/>
 
             <Label GridPane.columnIndex="0" GridPane.rowIndex="2" text="Display Weather"/>
             <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="displayWeather"/>

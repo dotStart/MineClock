@@ -40,7 +40,7 @@ public class SettingsWindowController implements Initializable {
 
   private final ConfigurationService configurationService;
   @FXML
-  private CheckBox automaticallyAttach;
+  private CheckBox allowSynchronization;
   @FXML
   private CheckBox displayWeather;
   @FXML
@@ -61,8 +61,8 @@ public class SettingsWindowController implements Initializable {
     // Settings Tab
     this.launchPortraitMode.selectedProperty()
         .bindBidirectional(this.configurationService.launchPortraitModeProperty());
-    this.automaticallyAttach.selectedProperty()
-        .bindBidirectional(this.configurationService.automaticallyAttachProperty());
+    this.allowSynchronization.selectedProperty()
+        .bindBidirectional(this.configurationService.allowSynchronizationProperty());
     this.displayWeather.selectedProperty()
         .bindBidirectional(this.configurationService.displayWeatherProperty());
 

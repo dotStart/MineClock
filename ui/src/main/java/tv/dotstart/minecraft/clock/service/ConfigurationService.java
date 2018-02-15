@@ -28,6 +28,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javax.annotation.Nonnull;
 import javax.inject.Singleton;
 import tv.dotstart.minecraft.clock.MineClockApplication;
 
@@ -40,7 +41,7 @@ import tv.dotstart.minecraft.clock.MineClockApplication;
 @Singleton
 public class ConfigurationService {
 
-  private final BooleanProperty automaticallyAttach = new SimpleBooleanProperty();
+  private final BooleanProperty allowSynchronization = new SimpleBooleanProperty();
   private final BooleanProperty displayWeather = new SimpleBooleanProperty();
   private final BooleanProperty launchPortraitMode = new SimpleBooleanProperty();
   private final Properties properties = new Properties();
@@ -49,59 +50,64 @@ public class ConfigurationService {
     this.loadConfiguration();
 
     // Hook Changes
-    ConfigurationChangeListener listener = new ConfigurationChangeListener();
+    ChangeListener listener = new ConfigurationChangeListener();
 
     this.launchPortraitMode.addListener(listener);
-    this.automaticallyAttach.addListener(listener);
+    this.allowSynchronization.addListener(listener);
     this.displayWeather.addListener(listener);
   }
 
-  public BooleanProperty automaticallyAttachProperty() {
-    return automaticallyAttach;
-  }
-
-  public BooleanProperty displayWeatherProperty() {
-    return displayWeather;
-  }
-
+  @Nonnull
   private Path getConfigurationPath() {
     return MineClockApplication.getApplicationDirectory().resolve("application.conf");
   }
 
-  public boolean isAutomaticallyAttach() {
-    return automaticallyAttach.get();
-  }
-
-  public void setAutomaticallyAttach(boolean automaticallyAttach) {
-    this.automaticallyAttach.set(automaticallyAttach);
-  }
-
-  public boolean isDisplayWeather() {
-    return displayWeather.get();
-  }
-
-  public void setDisplayWeather(boolean displayWeather) {
-    this.displayWeather.set(displayWeather);
-  }
-
   // <editor-fold desc="Getters and Setters">
   public boolean isLaunchPortraitMode() {
-    return launchPortraitMode.get();
+    return this.launchPortraitMode.get();
   }
 
   public void setLaunchPortraitMode(boolean launchPortraitMode) {
     this.launchPortraitMode.set(launchPortraitMode);
   }
 
+  @Nonnull
   public BooleanProperty launchPortraitModeProperty() {
-    return launchPortraitMode;
+    return this.launchPortraitMode;
   }
+
+  public boolean isAllowSynchronization() {
+    return this.allowSynchronization.get();
+  }
+
+  @Nonnull
+  public BooleanProperty allowSynchronizationProperty() {
+    return this.allowSynchronization;
+  }
+
+  public void setAllowSynchronization(boolean allowSynchronization) {
+    this.allowSynchronization.set(allowSynchronization);
+  }
+
+  @Nonnull
+  public BooleanProperty displayWeatherProperty() {
+    return this.displayWeather;
+  }
+
+  public boolean isDisplayWeather() {
+    return this.displayWeather.get();
+  }
+
+  public void setDisplayWeather(boolean displayWeather) {
+    this.displayWeather.set(displayWeather);
+  }
+  // </editor-fold>
 
   private void loadConfiguration() {
     Path configurationFile = this.getConfigurationPath();
 
     if (Files.notExists(configurationFile)) {
-      this.automaticallyAttach.set(true);
+      this.allowSynchronization.set(true);
       this.displayWeather.set(true);
 
       this.saveConfiguration();
@@ -116,17 +122,17 @@ public class ConfigurationService {
     }
 
     this.launchPortraitMode.set(Boolean.valueOf(this.properties.getProperty("launch-in-portrait")));
-    this.automaticallyAttach
-        .set(Boolean.valueOf(this.properties.getProperty("automatically-attach")));
+    this.allowSynchronization
+        .set(Boolean.valueOf(this.properties.getProperty("allow-synchronization")));
     this.displayWeather.set(Boolean.valueOf(this.properties.getProperty("display-weather")));
   }
 
   private void saveConfiguration() {
     this.properties
-        .setProperty("launch-in-portrait", Boolean.toString(this.launchPortraitMode.get()));
-    this.properties.setProperty("automatically-attach",
-        Boolean.toString(this.automaticallyAttachProperty().get()));
-    this.properties.setProperty("display-weather", Boolean.toString(this.displayWeather.get()));
+        .setProperty("launch-in-portrait", Boolean.toString(this.isLaunchPortraitMode()));
+    this.properties
+        .setProperty("allow-synchronization", Boolean.toString(this.isAllowSynchronization()));
+    this.properties.setProperty("display-weather", Boolean.toString(this.isDisplayWeather()));
 
     try (OutputStream outputStream = new FileOutputStream(this.getConfigurationPath().toFile())) {
       this.properties.storeToXML(outputStream, "MineClock Configuration File - DO NOT EDIT");
@@ -135,7 +141,6 @@ public class ConfigurationService {
           ex);
     }
   }
-  // </editor-fold>
 
   /**
    * Provides a change listener which automatically updates the local version of the configuration
@@ -148,7 +153,7 @@ public class ConfigurationService {
      */
     @Override
     public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-      saveConfiguration();
+      ConfigurationService.this.saveConfiguration();
     }
   }
 }
