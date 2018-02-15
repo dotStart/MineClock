@@ -32,7 +32,7 @@ Table of Contents
 Contacts
 --------
 
-* [IRC #Akkarin on EsperNet](http://webchat.esper.net/?channels=Akkarin)
+* [IRC #.start on EsperNet](http://webchat.esper.net/?channels=.start)
 * [GitHub](https://github.com/dotStart/MineClock)
 
 License
