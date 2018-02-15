@@ -6,6 +6,8 @@ apply plugin: 'edu.sc.seis.launch4j'
 mainClassName = "tv.dotstart.minecraft.clock.MineClockApplication"
 
 dependencies {
+    compile project(':network')
+
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 

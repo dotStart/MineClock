@@ -2,3 +2,7 @@ rootProject.name = 'parent'
 
 include 'ui'
 project(':ui').projectDir = "$rootDir/ui" as File
+
+include 'network'
+project(':network').projectDir = "$rootDir/network" as File
+
