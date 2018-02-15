@@ -52,6 +52,15 @@ public class WorldStateSynchronizationServer {
    * Evaluates whether or not to start the server upon startup.
    */
   public void postStartup() {
+    this.configurationService.allowSynchronizationProperty().addListener(
+        (observable, oldValue, newValue) -> {
+          if (newValue) {
+            this.start();
+          } else {
+            this.stop();
+          }
+        });
+
     if (this.configurationService.isAllowSynchronization()) {
       this.start();
     }
@@ -111,6 +120,8 @@ public class WorldStateSynchronizationServer {
       logger.info("Shutting down World State server ...");
       this.channel.close().awaitUninterruptibly();
       this.eventLoopGroup.shutdownGracefully().awaitUninterruptibly();
+
+      this.channel = null;
       logger.info("Server has been shut down");
     } finally {
       this.lock.unlock();
