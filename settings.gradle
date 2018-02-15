@@ -1,8 +1,11 @@
 rootProject.name = 'parent'
 
+include 'network'
+project(':network').projectDir = "$rootDir/network" as File
+
 include 'ui'
 project(':ui').projectDir = "$rootDir/ui" as File
 
-include 'network'
-project(':network').projectDir = "$rootDir/network" as File
+include 'client'
+project(':client').projectDir = "$rootDir/client" as File
 
