@@ -44,6 +44,7 @@ import javafx.util.Duration;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tv.dotstart.minecraft.clock.service.ConfigurationService;
@@ -54,6 +55,7 @@ import tv.dotstart.minecraft.clock.service.ConfigurationService;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
+@Singleton
 public class MainWindowController implements Initializable {
 
   private static final Logger logger = LogManager.getFormatterLogger(MainWindowController.class);
