@@ -39,6 +39,8 @@ import javax.annotation.Nonnull;
 import rocks.spud.minecraft.mineclock.inject.FXMLProvider;
 
 /**
+ * Provides an entry point to the JavaFX application.
+ *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MineClockApplication extends Application {
