@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -36,6 +37,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javax.annotation.Nonnull;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tv.dotstart.minecraft.clock.inject.FXMLProvider;
 
 /**
@@ -44,6 +47,8 @@ import tv.dotstart.minecraft.clock.inject.FXMLProvider;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MineClockApplication extends Application {
+
+  private static final Logger logger = LogManager.getFormatterLogger(MineClockApplication.class);
 
   public static final int DEFAULT_WINDOW_WIDTH = 960;
   public static final int DEFAULT_WINDOW_HEIGHT = 540;
@@ -87,7 +92,15 @@ public class MineClockApplication extends Application {
     return basePath;
   }
 
+  @SuppressWarnings("UseOfSystemOutOrSystemErr")
   public static void main(String[] arguments) {
+    Package p = MineClockApplication.class.getPackage();
+    System.out
+        .println("MineClock v" + Optional.ofNullable(p.getImplementationVersion()).orElse("0.0.0"));
+    System.out
+        .println("Copyright (C) 2016-2018 Johannes \".start\" Donath <johannesd@torchmind.com>");
+    System.out.println("Licensed under the Terms of the Apache License, Version 2.0");
+
     launch(MineClockApplication.class, arguments);
   }
 
@@ -97,6 +110,8 @@ public class MineClockApplication extends Application {
    */
   @SuppressWarnings("CallToPrintStackTrace")
   public static void reportError(@Nonnull Throwable throwable) {
+    logger.error("Received an uncaught exception: " + throwable.getMessage(), throwable);
+
     Alert alert = new Alert(Alert.AlertType.ERROR);
     alert.initModality(Modality.APPLICATION_MODAL);
 
@@ -134,14 +149,17 @@ public class MineClockApplication extends Application {
    */
   @Override
   public void start(@Nonnull final Stage primaryStage) throws Exception {
+    logger.info("Updating global exception handler");
     Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
       reportError(e);
       System.exit(-1);
     });
 
+    logger.info("Loading application icon");
     primaryStage.getIcons()
         .add(new Image(this.getClass().getResourceAsStream("/image/application.png")));
 
+    logger.info("Initializing main window");
     primaryStage.initStyle(StageStyle.UNDECORATED);
     primaryStage.setResizable(false);
     primaryStage.setWidth(DEFAULT_WINDOW_WIDTH);
@@ -151,6 +169,7 @@ public class MineClockApplication extends Application {
     Scene scene = new Scene(
         loader.load(this.getClass().getResourceAsStream("/fxml/MainWindow.fxml")));
 
+    logger.info("Marking primary stage visible");
     primaryStage.setScene(scene);
     primaryStage.show();
   }

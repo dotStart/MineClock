@@ -44,6 +44,8 @@ import javafx.util.Duration;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tv.dotstart.minecraft.clock.service.ConfigurationService;
 
 /**
@@ -53,6 +55,8 @@ import tv.dotstart.minecraft.clock.service.ConfigurationService;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class MainWindowController implements Initializable {
+
+  private static final Logger logger = LogManager.getFormatterLogger(MainWindowController.class);
 
   /**
    * Defines the total amount of time a single day/night cycle takes (assuming that the server is
@@ -219,6 +223,8 @@ public class MainWindowController implements Initializable {
    */
   @FXML
   private void onLandscape(@Nonnull ActionEvent event) {
+    logger.info("Switching to landscape mode");
+
     this.root.getScene().getWindow().setWidth(960);
     this.root.getStyleClass().remove("portrait");
 
@@ -230,6 +236,8 @@ public class MainWindowController implements Initializable {
    */
   @FXML
   private void onPortrait(@Nonnull ActionEvent event) {
+    logger.info("Switching to portrait mode");
+
     this.root.getScene().getWindow().setWidth(400);
     this.root.getStyleClass().add("portrait");
 
@@ -242,6 +250,7 @@ public class MainWindowController implements Initializable {
    */
   @FXML
   private void onSetEvening(@Nonnull ActionEvent event) {
+    logger.info("Manually switching time to evening");
     this.setCycleTime(TIMELINE_POSITION_EVENING);
   }
 
@@ -251,6 +260,7 @@ public class MainWindowController implements Initializable {
    */
   @FXML
   private void onSetMidnight(@Nonnull ActionEvent event) {
+    logger.info("Manually switching time to midnight");
     this.setCycleTime(TIMELINE_POSITION_MIDNIGHT);
   }
 
@@ -260,6 +270,7 @@ public class MainWindowController implements Initializable {
    */
   @FXML
   private void onSetMorning(@Nonnull ActionEvent event) {
+    logger.info("Manually switching time to morning");
     this.setCycleTime(TIMELINE_POSITION_MORNING);
   }
 
@@ -269,11 +280,17 @@ public class MainWindowController implements Initializable {
    */
   @FXML
   private void onSetNoon(@Nonnull ActionEvent event) {
+    logger.info("Manually switching time to noon");
     this.setCycleTime(TIMELINE_POSITION_NIGHT);
   }
 
+  /**
+   * Opens a settings dialogue which permits the customization of the application.
+   */
   @FXML
   private void onSettings(@Nonnull ActionEvent event) {
+    logger.info("Opening settings dialogue");
+
     try {
       Scene scene = new Scene(this.injector.getInstance(FXMLLoader.class)
           .load(this.getClass().getResourceAsStream("/fxml/SettingsWindow.fxml")));

@@ -30,6 +30,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javax.annotation.Nonnull;
 import javax.inject.Singleton;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tv.dotstart.minecraft.clock.MineClockApplication;
 
 /**
@@ -40,6 +42,7 @@ import tv.dotstart.minecraft.clock.MineClockApplication;
  */
 @Singleton
 public class ConfigurationService {
+  private static final Logger logger = LogManager.getFormatterLogger(ConfigurationService.class);
 
   private final BooleanProperty allowSynchronization = new SimpleBooleanProperty();
   private final BooleanProperty displayWeather = new SimpleBooleanProperty();
@@ -106,7 +109,11 @@ public class ConfigurationService {
   private void loadConfiguration() {
     Path configurationFile = this.getConfigurationPath();
 
+    logger.info("Application configuration file: %s", configurationFile.toAbsolutePath());
+
     if (Files.notExists(configurationFile)) {
+      logger.warn("No configuration file found - Falling back to defaults");
+
       this.allowSynchronization.set(true);
       this.displayWeather.set(true);
 
@@ -125,9 +132,13 @@ public class ConfigurationService {
     this.allowSynchronization
         .set(Boolean.valueOf(this.properties.getProperty("allow-synchronization")));
     this.displayWeather.set(Boolean.valueOf(this.properties.getProperty("display-weather")));
+
+    logger.info("Restored previous application configuration");
   }
 
   private void saveConfiguration() {
+    logger.info("Writing configuration file to disk");
+
     this.properties
         .setProperty("launch-in-portrait", Boolean.toString(this.isLaunchPortraitMode()));
     this.properties
