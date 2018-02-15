@@ -40,6 +40,7 @@ import javax.annotation.Nonnull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tv.dotstart.minecraft.clock.inject.FXMLProvider;
+import tv.dotstart.minecraft.clock.service.server.WorldStateSynchronizationServer;
 
 /**
  * Provides an entry point to the JavaFX application.
@@ -172,5 +173,15 @@ public class MineClockApplication extends Application {
     logger.info("Marking primary stage visible");
     primaryStage.setScene(scene);
     primaryStage.show();
+
+    this.injector.getInstance(WorldStateSynchronizationServer.class).postStartup();
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void stop() {
+    this.injector.getInstance(WorldStateSynchronizationServer.class).stop();
   }
 }
