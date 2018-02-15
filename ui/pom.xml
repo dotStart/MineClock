@@ -7,7 +7,7 @@
     <!-- Parent Artifact Information -->
     <parent>
         <artifactId>parent</artifactId>
-        <groupId>rocks.spud.minecraft.mineclock</groupId>
+        <groupId>tv.dotstart.minecraft.clock</groupId>
         <version>1.1-SNAPSHOT</version>
     </parent>
 
@@ -39,25 +39,19 @@
         <finalName>MineClock</finalName>
 
         <plugins>
-            <!-- Java Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-
-            <!-- LESS CSS -->
             <plugin>
                 <groupId>org.lesscss</groupId>
                 <artifactId>lesscss-maven-plugin</artifactId>
             </plugin>
-
-            <!-- Build Number -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>buildnumber-maven-plugin</artifactId>
             </plugin>
 
-            <!-- Jar Creation -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -67,35 +61,18 @@
                         <manifest>
                             <mainClass>tv.dotstart.minecraft.clock.MineClockApplication</mainClass>
                         </manifest>
-
-                        <manifestEntries>
-                            <Agent-Class>rocks.spud.minecraft.mineclock.attach.agent.MinecraftAgent</Agent-Class>
-                            <Can-Redefine-Classes>true</Can-Redefine-Classes>
-                        </manifestEntries>
                     </archive>
                 </configuration>
             </plugin>
-
-            <!-- Attach Sources -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
             </plugin>
-
-            <!-- Shade -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
             </plugin>
-
-            <!-- Copy Dependencies -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-
-            <!-- Launch4j2 -->
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
