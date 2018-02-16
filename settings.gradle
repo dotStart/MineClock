@@ -9,3 +9,6 @@ project(':ui').projectDir = "$rootDir/ui" as File
 include 'client'
 project(':client').projectDir = "$rootDir/client" as File
 
+include 'liteloader'
+project(':liteloader').projectDir = "$rootDir/liteloader" as File
+
