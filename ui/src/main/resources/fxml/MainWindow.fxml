@@ -12,7 +12,8 @@
 <?import tv.dotstart.minecraft.clock.control.TitleBar?>
 <StackPane xmlns:fx="http://javafx.com/fxml" alignment="TOP_CENTER"
   maxHeight="540" maxWidth="960"
-  minHeight="540" minWidth="960" styleClass="window" fx:controller="tv.dotstart.minecraft.clock.controller.MainWindowController" fx:id="root">
+  minHeight="540" minWidth="960" styleClass="window"
+  fx:controller="tv.dotstart.minecraft.clock.controller.MainWindowController" fx:id="root">
   <stylesheets>
     <URL value="@/style/Window.css"/>
     <URL value="@/style/MainWindow.css"/>
@@ -36,6 +37,9 @@
   <ImageView opacity="0" fx:id="backgroundNight">
     <Image url="/image/background/night.png"/>
   </ImageView>
+  <ImageView opacity="0" fx:id="backgroundRain">
+    <Image url="/image/background/rain.png"/>
+  </ImageView>
 
   <VBox alignment="TOP_LEFT">
     <TitleBar title="MineClock">
@@ -52,7 +56,6 @@
 
       <VBox alignment="TOP_CENTER" styleClass="informational">
         <Label styleClass="time" text="00:00 AM" fx:id="time"/>
-        <Label opacity="0.0" styleClass="subtitle" text="Rain" fx:id="rainLabel"/>
       </VBox>
 
       <HBox alignment="BOTTOM_CENTER" opacity="1.0" spacing="20" styleClass="controls"

@@ -29,6 +29,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -76,6 +78,12 @@ public class MainWindowController implements Initializable {
   private static final java.time.Duration SYNCHRONIZATION_EXPIRATION_DURATION = java.time.Duration
       .ofMinutes(1);
 
+  /**
+   * Defines the total amount of time the application uses to animate the transition between
+   * different states.
+   */
+  private static final Duration TRANSITION_DURATION = Duration.seconds(2);
+
   public static final double TIMELINE_POSITION_EVENING = 0.5;
   public static final double TIMELINE_POSITION_MIDNIGHT = 0.75;
   public static final double TIMELINE_POSITION_MORNING = 0;
@@ -86,6 +94,9 @@ public class MainWindowController implements Initializable {
 
   private final Rotate cycleRotation = new Rotate(-90, 960, 960);
   private final Timeline cycleTimeline = new Timeline();
+
+  private final BooleanProperty raining = new SimpleBooleanProperty();
+  private FadeTransition rainTransition;
 
   private final Timer synchronizationTimer = new Timer(true);
   private Instant lastSynchronizationTimestamp = Instant.EPOCH;
@@ -107,6 +118,8 @@ public class MainWindowController implements Initializable {
   @FXML
   private ImageView backgroundNight;
   @FXML
+  private ImageView backgroundRain;
+  @FXML
   private HBox controls;
   @FXML
   private ImageView cycle;
@@ -114,8 +127,6 @@ public class MainWindowController implements Initializable {
   private Button landscapeButton;
   @FXML
   private Button portraitButton;
-  @FXML
-  private Label rainLabel;
   // </editor-fold>
 
   @Inject
@@ -211,8 +222,16 @@ public class MainWindowController implements Initializable {
 
     // apply transformation
     this.cycle.getTransforms().add(this.cycleRotation);
-
     this.cycleTimeline.play();
+
+    // rain transition
+    this.rainTransition = new FadeTransition(TRANSITION_DURATION, this.backgroundRain);
+    this.raining.addListener((observable, oldValue, newValue) -> {
+      this.rainTransition.setFromValue(newValue ? 0 : 1);
+      this.rainTransition.setToValue(newValue ? 1 : 0);
+
+      this.rainTransition.play();
+    });
 
     // Switch to Portrait if requested
     if (this.configurationService.isLaunchPortraitMode()) {
@@ -230,31 +249,17 @@ public class MainWindowController implements Initializable {
     this.lastSynchronizationTimestamp = Instant.now();
 
     if (this.controls.getOpacity() == 1.0) {
-      FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.controls);
+      FadeTransition fadeOutTransition = new FadeTransition(TRANSITION_DURATION, this.controls);
       fadeOutTransition.setFromValue(1.0);
       fadeOutTransition.setToValue(0.0);
       fadeOutTransition.play();
 
-      FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.synchronizationLabel);
+      FadeTransition fadeInTransition = new FadeTransition(TRANSITION_DURATION,
+          this.synchronizationLabel);
       fadeInTransition.setFromValue(0.0);
       fadeInTransition.setToValue(1.0);
       fadeInTransition.play();
     }
-
-    // TODO: Rain
-    /*
-    if (message.isRaining() && this.rainLabel.getOpacity() == 0.0) {
-      FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-      fadeInTransition.setFromValue(0.0);
-      fadeInTransition.setToValue(1.0);
-      fadeInTransition.play();
-    } else if (!message.isRaining() && this.rainLabel.getOpacity() == 1.0) {
-      FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2), this.rainLabel);
-      fadeOutTransition.setFromValue(1.0);
-      fadeOutTransition.setToValue(0.0);
-      fadeOutTransition.play();
-    }
-    */
   }
 
   /**
@@ -264,6 +269,13 @@ public class MainWindowController implements Initializable {
    */
   public void setCycleTime(@Nonnegative double percentage) {
     this.cycleTimeline.jumpTo(CYCLE_TIME.multiply(percentage));
+  }
+
+  /**
+   * Sets whether it is currently raining.
+   */
+  public void setRaining(boolean raining) {
+    this.raining.set(raining);
   }
 
   // <editor-fold desc="Event Handlers">
@@ -374,24 +386,19 @@ public class MainWindowController implements Initializable {
             .plus(SYNCHRONIZATION_EXPIRATION_DURATION);
 
         if (expirationTimestamp.isBefore(Instant.now())) {
+          // reset rain state as we are no longer receiving updates in that regard
+          MainWindowController.this.setRaining(false);
+
           if (MainWindowController.this.synchronizationLabel.getOpacity() == 1.0) {
-            FadeTransition fadeOutTransition = new FadeTransition(Duration.seconds(2),
+            FadeTransition fadeOutTransition = new FadeTransition(TRANSITION_DURATION,
                 MainWindowController.this.synchronizationLabel);
             fadeOutTransition.setFromValue(1.0);
             fadeOutTransition.setToValue(0.0);
             fadeOutTransition.play();
           }
 
-          if (MainWindowController.this.rainLabel.getOpacity() == 1.0) {
-            FadeTransition rainFadeOutTransition = new FadeTransition(Duration.seconds(2),
-                MainWindowController.this.rainLabel);
-            rainFadeOutTransition.setFromValue(1.0);
-            rainFadeOutTransition.setToValue(0.0);
-            rainFadeOutTransition.play();
-          }
-
           if (MainWindowController.this.controls.getOpacity() == 0.0) {
-            FadeTransition fadeInTransition = new FadeTransition(Duration.seconds(2),
+            FadeTransition fadeInTransition = new FadeTransition(TRANSITION_DURATION,
                 MainWindowController.this.controls);
             fadeInTransition.setFromValue(0.0);
             fadeInTransition.setToValue(1.0);
