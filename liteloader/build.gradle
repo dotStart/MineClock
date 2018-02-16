@@ -31,8 +31,9 @@ litemod {
     json {
         author = ".start"
         mcversion = project.targetVersion
+        name = "mineclock"
+        displayName = "MineClock"
         description = "Provides game state synchronization with MineClock"
-        revision = project.revision
     }
 }
 
