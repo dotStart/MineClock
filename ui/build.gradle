@@ -47,6 +47,10 @@ shadowJar {
     classifier = null
     version = null
     configurations = [project.configurations.compile]
+
+    from("${buildDir}") {
+        include 'style/*.css'
+    }
 }
 
 launch4j {
