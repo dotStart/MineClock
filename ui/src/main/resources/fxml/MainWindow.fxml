@@ -60,13 +60,13 @@
 
       <HBox alignment="BOTTOM_CENTER" opacity="1.0" spacing="20" styleClass="controls"
         fx:id="controls">
-        <Button onAction="#onSetMorning" text="Morning"/>
-        <Button onAction="#onSetNoon" text="Noon"/>
-        <Button onAction="#onSetEvening" text="Evening"/>
-        <Button onAction="#onSetMidnight" text="Midnight"/>
+        <Button onAction="#onSetMorning" text="%main.time.set.morning"/>
+        <Button onAction="#onSetNoon" text="%main.time.set.noon"/>
+        <Button onAction="#onSetEvening" text="%main.time.set.evening"/>
+        <Button onAction="#onSetMidnight" text="%main.time.set.midnight"/>
       </HBox>
-      <Label alignment="BOTTOM_CENTER" opacity="0.0" styleClass="synchronized" text="Synchronized"
-        fx:id="synchronizationLabel"/>
+      <Label alignment="BOTTOM_CENTER" opacity="0.0" styleClass="synchronized"
+        text="%main.synchronized" fx:id="synchronizationLabel"/>
     </VBox>
   </VBox>
 </StackPane>

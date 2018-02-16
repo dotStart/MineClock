@@ -43,7 +43,7 @@
   </ImageView>
 
   <VBox spacing="5">
-    <TitleBar minimizable="false" title="Settings"/>
+    <TitleBar minimizable="false" title="%settings.title"/>
 
     <VBox VBox.vgrow="ALWAYS">
       <padding>
@@ -51,36 +51,36 @@
       </padding>
 
       <TabPane VBox.vgrow="ALWAYS">
-        <Tab closable="false" text="Settings">
+        <Tab closable="false" text="%settings.title">
           <GridPane hgap="300" vgap="15">
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="0" text="Launch in Portrait Mode"/>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="0" text="%settings.portrait"/>
             <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="launchPortraitMode"/>
 
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="1" text="Permit Time Synchronization"/>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1" text="%settings.synchronization"/>
             <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="allowSynchronization"/>
 
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="2" text="Display Weather"/>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="2" text="%settings.weather"/>
             <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="displayWeather"/>
           </GridPane>
         </Tab>
-        <Tab closable="false" text="About">
+        <Tab closable="false" text="%about.title">
           <VBox spacing="20" styleClass="about">
             <VBox styleClass="copyright">
               <Label text="MineClock v%s" fx:id="versionLabel"/>
-              <Label text="Copyright &#169; 2016 Johannes Donath"/>
-              <Label text="and other copyright owners as documented in the project's IP log"/>
+              <Label text="%about.copyright"/>
+              <Label text="%about.copyright.extra"/>
             </VBox>
             <VBox>
-              <Label text="Powered by Open Source Software and Resources"/>
-              <Hyperlink onAction="#onOpenSourceInformation" text="Learn More"/>
+              <Label text="%about.opensource"/>
+              <Hyperlink onAction="#onOpenSourceInformation" text="%about.opensource.credits"/>
             </VBox>
 
             <Pane VBox.vgrow="ALWAYS"/>
 
             <HBox>
-              <Button onAction="#onSource" text="Source Code"/>
+              <Button onAction="#onSource" text="%about.source"/>
               <Pane HBox.hgrow="ALWAYS"/>
-              <Button onAction="#onForums" text="Minecraft Forums"/>
+              <Button onAction="#onForums" text="%about.forums"/>
             </HBox>
           </VBox>
         </Tab>
