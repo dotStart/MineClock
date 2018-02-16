@@ -182,6 +182,8 @@ public class MineClockApplication extends Application {
    */
   @Override
   public void stop() {
+    logger.info("Shutting down MineClock ...");
     this.injector.getInstance(WorldStateSynchronizationServer.class).stop();
+    logger.info("Good Bye :)");
   }
 }
