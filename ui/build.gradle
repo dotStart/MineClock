@@ -1,9 +1,6 @@
-apply plugin: 'application'
 apply plugin: "lesscss"
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'edu.sc.seis.launch4j'
-
-mainClassName = "tv.dotstart.minecraft.clock.MineClockApplication"
 
 dependencies {
     compile project(':network')
@@ -31,6 +28,15 @@ jar {
         include 'style/*.css'
     }
 
+    manifest {
+        attributes(
+                'Main-Class': "tv.dotstart.minecraft.clock.MineClockApplication",
+                'Implementation-Title': project.name,
+                'Implementation-Vendor-Id': project.group,
+                'Implementation-Version': project.version
+        )
+    }
+
     dependsOn 'lesscss'
 }
 
@@ -51,11 +57,15 @@ shadowJar {
     from("${buildDir}") {
         include 'style/*.css'
     }
+
+    manifest {
+        inheritFrom project.tasks.jar.manifest
+    }
 }
 
 launch4j {
     outfile = "MineClock.exe"
-    mainClassName = project.mainClassName
+    mainClassName = "tv.dotstart.minecraft.clock.MineClockApplication"
     jar = "${projectDir}/build/libs/${project.tasks.shadowJar.baseName}.jar"
     icon = "${projectDir}/src/main/resources/image/application.ico"
 
