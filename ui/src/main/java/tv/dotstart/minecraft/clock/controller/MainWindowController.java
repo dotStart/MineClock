@@ -29,6 +29,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -96,6 +97,7 @@ public class MainWindowController implements Initializable {
   private final Timeline cycleTimeline = new Timeline();
 
   private final BooleanProperty raining = new SimpleBooleanProperty();
+  private BooleanBinding rainBinding;
   private FadeTransition rainTransition;
 
   private final Timer synchronizationTimer = new Timer(true);
@@ -226,7 +228,8 @@ public class MainWindowController implements Initializable {
 
     // rain transition
     this.rainTransition = new FadeTransition(TRANSITION_DURATION, this.backgroundRain);
-    this.raining.addListener((observable, oldValue, newValue) -> {
+    this.rainBinding = this.configurationService.displayWeatherProperty().and(this.raining);
+    this.rainBinding.addListener((observable, oldValue, newValue) -> {
       this.rainTransition.setFromValue(newValue ? 0 : 1);
       this.rainTransition.setToValue(newValue ? 1 : 0);
 
