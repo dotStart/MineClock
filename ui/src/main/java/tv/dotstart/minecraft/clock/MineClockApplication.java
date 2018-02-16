@@ -101,6 +101,7 @@ public class MineClockApplication extends Application {
     System.out
         .println("Copyright (C) 2016-2018 Johannes \".start\" Donath <johannesd@torchmind.com>");
     System.out.println("Licensed under the Terms of the Apache License, Version 2.0");
+    System.out.println();
 
     launch(MineClockApplication.class, arguments);
   }
