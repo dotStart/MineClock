@@ -150,14 +150,20 @@ public class MainWindowController implements Initializable {
 
       if (hours >= 24) {
         hours %= 24;
-      } else if (hours > 12) {
-        hours %= 12;
-        pm = true;
-      } else if (hours == 12 && minutes > 0) {
-        pm = true;
       }
 
-      this.time.setText(String.format("%02d:%02d %s", hours, minutes, (pm ? "PM" : "AM")));
+      if (!this.configurationService.isDisplay24HourTime()) {
+        if (hours > 12) {
+          hours %= 12;
+          pm = true;
+        } else if (hours == 12 && minutes > 0) {
+          pm = true;
+        }
+
+        this.time.setText(String.format("%02d:%02d %s", hours, minutes, (pm ? "PM" : "AM")));
+      } else {
+        this.time.setText(String.format("%02d:%02d", hours, minutes));
+      }
     });
 
     this.synchronizationTimer.schedule(new SynchronizationTask(), 1000, 2000);

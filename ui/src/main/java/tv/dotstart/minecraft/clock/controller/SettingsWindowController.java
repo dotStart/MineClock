@@ -42,6 +42,8 @@ public class SettingsWindowController implements Initializable {
   @FXML
   private CheckBox allowSynchronization;
   @FXML
+  private CheckBox display24h;
+  @FXML
   private CheckBox displayWeather;
   @FXML
   private CheckBox launchPortraitMode;
@@ -63,6 +65,8 @@ public class SettingsWindowController implements Initializable {
         .bindBidirectional(this.configurationService.launchPortraitModeProperty());
     this.allowSynchronization.selectedProperty()
         .bindBidirectional(this.configurationService.allowSynchronizationProperty());
+    this.display24h.selectedProperty()
+        .bindBidirectional(this.configurationService.display24HourTimeProperty());
     this.displayWeather.selectedProperty()
         .bindBidirectional(this.configurationService.displayWeatherProperty());
 
@@ -72,7 +76,8 @@ public class SettingsWindowController implements Initializable {
       String version = (p == null ? null : p.getImplementationVersion());
 
       this.versionLabel
-          .setText(String.format(this.versionLabel.getText(), (version == null ? "0.0.0" : version)));
+          .setText(
+              String.format(this.versionLabel.getText(), (version == null ? "0.0.0" : version)));
     }
   }
 

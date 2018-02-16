@@ -42,21 +42,25 @@ import tv.dotstart.minecraft.clock.MineClockApplication;
  */
 @Singleton
 public class ConfigurationService {
+
   private static final Logger logger = LogManager.getFormatterLogger(ConfigurationService.class);
 
   private final BooleanProperty allowSynchronization = new SimpleBooleanProperty();
+  private final BooleanProperty display24HourTime = new SimpleBooleanProperty();
   private final BooleanProperty displayWeather = new SimpleBooleanProperty();
   private final BooleanProperty launchPortraitMode = new SimpleBooleanProperty();
   private final Properties properties = new Properties();
 
+  @SuppressWarnings("unchecked")
   public ConfigurationService() {
     this.loadConfiguration();
 
     // Hook Changes
     ChangeListener listener = new ConfigurationChangeListener();
 
-    this.launchPortraitMode.addListener(listener);
     this.allowSynchronization.addListener(listener);
+    this.display24HourTime.addListener(listener);
+    this.launchPortraitMode.addListener(listener);
     this.displayWeather.addListener(listener);
   }
 
@@ -66,19 +70,6 @@ public class ConfigurationService {
   }
 
   // <editor-fold desc="Getters and Setters">
-  public boolean isLaunchPortraitMode() {
-    return this.launchPortraitMode.get();
-  }
-
-  public void setLaunchPortraitMode(boolean launchPortraitMode) {
-    this.launchPortraitMode.set(launchPortraitMode);
-  }
-
-  @Nonnull
-  public BooleanProperty launchPortraitModeProperty() {
-    return this.launchPortraitMode;
-  }
-
   public boolean isAllowSynchronization() {
     return this.allowSynchronization.get();
   }
@@ -90,6 +81,32 @@ public class ConfigurationService {
 
   public void setAllowSynchronization(boolean allowSynchronization) {
     this.allowSynchronization.set(allowSynchronization);
+  }
+
+  public boolean isDisplay24HourTime() {
+    return this.display24HourTime.get();
+  }
+
+  @Nonnull
+  public BooleanProperty display24HourTimeProperty() {
+    return this.display24HourTime;
+  }
+
+  public void setDisplay24HourTime(boolean display24HourTime) {
+    this.display24HourTime.set(display24HourTime);
+  }
+
+  public boolean isLaunchPortraitMode() {
+    return this.launchPortraitMode.get();
+  }
+
+  public void setLaunchPortraitMode(boolean launchPortraitMode) {
+    this.launchPortraitMode.set(launchPortraitMode);
+  }
+
+  @Nonnull
+  public BooleanProperty launchPortraitModeProperty() {
+    return this.launchPortraitMode;
   }
 
   @Nonnull
@@ -115,7 +132,9 @@ public class ConfigurationService {
       logger.warn("No configuration file found - Falling back to defaults");
 
       this.allowSynchronization.set(true);
+      this.display24HourTime.set(false);
       this.displayWeather.set(true);
+      this.launchPortraitMode.set(false);
 
       this.saveConfiguration();
       return;
@@ -128,10 +147,14 @@ public class ConfigurationService {
           "Could not load application configuration file: " + ex.getMessage(), ex);
     }
 
-    this.launchPortraitMode.set(Boolean.valueOf(this.properties.getProperty("launch-in-portrait")));
     this.allowSynchronization
-        .set(Boolean.valueOf(this.properties.getProperty("allow-synchronization")));
-    this.displayWeather.set(Boolean.valueOf(this.properties.getProperty("display-weather")));
+        .set(Boolean.valueOf(this.properties.getProperty("allow-synchronization", "true")));
+    this.display24HourTime
+        .set(Boolean.valueOf(this.properties.getProperty("display-24h-time", "false")));
+    this.launchPortraitMode
+        .set(Boolean.valueOf(this.properties.getProperty("launch-in-portrait", "false")));
+    this.displayWeather
+        .set(Boolean.valueOf(this.properties.getProperty("display-weather", "true")));
 
     logger.info("Restored previous application configuration");
   }
@@ -139,10 +162,12 @@ public class ConfigurationService {
   private void saveConfiguration() {
     logger.info("Writing configuration file to disk");
 
-    this.properties
-        .setProperty("launch-in-portrait", Boolean.toString(this.isLaunchPortraitMode()));
+    this.properties.clear();
     this.properties
         .setProperty("allow-synchronization", Boolean.toString(this.isAllowSynchronization()));
+    this.properties.setProperty("display-24h-time", Boolean.toString(this.isDisplay24HourTime()));
+    this.properties
+        .setProperty("launch-in-portrait", Boolean.toString(this.isLaunchPortraitMode()));
     this.properties.setProperty("display-weather", Boolean.toString(this.isDisplayWeather()));
 
     try (OutputStream outputStream = new FileOutputStream(this.getConfigurationPath().toFile())) {

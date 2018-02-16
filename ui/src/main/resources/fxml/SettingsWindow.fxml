@@ -53,14 +53,17 @@
       <TabPane VBox.vgrow="ALWAYS">
         <Tab closable="false" text="%settings.title">
           <GridPane hgap="300" vgap="15">
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="0" text="%settings.portrait"/>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.fillWidth="true" text="%settings.portrait"/>
             <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="0" fx:id="launchPortraitMode"/>
 
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="1" text="%settings.synchronization"/>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.fillWidth="true" text="%settings.synchronization"/>
             <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="1" fx:id="allowSynchronization"/>
 
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="2" text="%settings.weather"/>
-            <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="displayWeather"/>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.fillWidth="true" text="%settings.display24h" />
+            <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="2" fx:id="display24h"/>
+
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.fillWidth="true" text="%settings.weather"/>
+            <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="3" fx:id="displayWeather"/>
           </GridPane>
         </Tab>
         <Tab closable="false" text="%about.title">
