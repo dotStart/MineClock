@@ -11,7 +11,7 @@ depths of Moria?
 
 No? Me neither. But let's get you introduced to MineClock anyways:
 
-![Screenshot](https://i.imgur.com/sEG8khC.gif)
+![Screenshot](https://i.imgur.com/1EicahF.gif)
 
 This Java based program easily integrates with Minecraft and allows you to see what time it is while
 you focus on mining or PvP (I especially recommend trying to run it on another screen while playing
