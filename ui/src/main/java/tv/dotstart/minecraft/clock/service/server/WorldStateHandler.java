@@ -45,6 +45,7 @@ public class WorldStateHandler extends ChannelInboundHandlerAdapter {
             packet.isRaining() ? "on" : "off");
 
         this.controller.setCycleTime(packet.getTime() / (double) MINECRAFT_DAY_LENGTH);
+        this.controller.setPaused(packet.isPaused());
         this.controller.setRaining(packet.isRaining());
         this.controller.refreshSynchronization();
       });

@@ -143,6 +143,7 @@ public class WorldStateClient {
   public final class UpdateBuilder {
 
     private int worldTime;
+    private boolean gamePaused;
     private boolean currentlyRaining;
 
     private UpdateBuilder() {
@@ -150,7 +151,7 @@ public class WorldStateClient {
 
     @Nonnull
     public WorldStatePacket buildPacket() {
-      return new WorldStatePacket(this.worldTime, this.currentlyRaining);
+      return new WorldStatePacket(this.worldTime, this.gamePaused, this.currentlyRaining);
     }
 
     /**
@@ -180,6 +181,12 @@ public class WorldStateClient {
     @Nonnull
     public UpdateBuilder setWorldTime(int worldTime) {
       this.worldTime = worldTime;
+      return this;
+    }
+
+    @Nonnull
+    public UpdateBuilder setGamePaused(boolean gamePaused) {
+      this.gamePaused = gamePaused;
       return this;
     }
 

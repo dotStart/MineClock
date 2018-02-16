@@ -273,9 +273,24 @@ public class MainWindowController implements Initializable {
 
   /**
    * Sets whether it is currently raining.
+   *
+   * @param raining true if raining, false otherwise.
    */
   public void setRaining(boolean raining) {
     this.raining.set(raining);
+  }
+
+  /**
+   * Sets whether the game is currently paused (internal server only).
+   *
+   * @param paused true if game is paused, false otherwise.
+   */
+  public void setPaused(boolean paused) {
+    if (paused) {
+      this.cycleTimeline.pause();
+    } else {
+      this.cycleTimeline.play();
+    }
   }
 
   // <editor-fold desc="Event Handlers">
@@ -386,8 +401,10 @@ public class MainWindowController implements Initializable {
             .plus(SYNCHRONIZATION_EXPIRATION_DURATION);
 
         if (expirationTimestamp.isBefore(Instant.now())) {
-          // reset rain state as we are no longer receiving updates in that regard
+          // reset world state information which would otherwise not reset on its own (e.g.
+          // functionality which is specific to the synchronization server)
           MainWindowController.this.setRaining(false);
+          MainWindowController.this.setPaused(false);
 
           if (MainWindowController.this.synchronizationLabel.getOpacity() == 1.0) {
             FadeTransition fadeOutTransition = new FadeTransition(TRANSITION_DURATION,

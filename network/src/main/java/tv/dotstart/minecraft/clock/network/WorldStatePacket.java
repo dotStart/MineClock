@@ -12,11 +12,13 @@ import javax.annotation.Nonnull;
  */
 public class WorldStatePacket {
 
-  private final boolean raining;
   private final int time;
+  private final boolean paused;
+  private final boolean raining;
 
-  public WorldStatePacket(int time, boolean raining) {
+  public WorldStatePacket(int time, boolean paused, boolean raining) {
     this.time = time;
+    this.paused = paused;
     this.raining = raining;
   }
 
@@ -25,7 +27,29 @@ public class WorldStatePacket {
    */
   public WorldStatePacket(@Nonnull ByteBuf buffer) {
     this.time = buffer.readUnsignedShort();
+    this.paused = buffer.readBoolean();
     this.raining = buffer.readBoolean();
+  }
+
+  public int getTime() {
+    return this.time;
+  }
+
+  public boolean isPaused() {
+    return this.paused;
+  }
+
+  public boolean isRaining() {
+    return this.raining;
+  }
+
+  /**
+   * Serializes the world state packet into the supplied buffer.
+   */
+  public void write(@Nonnull ByteBuf buffer) {
+    buffer.writeShort(this.time);
+    buffer.writeBoolean(this.paused);
+    buffer.writeBoolean(this.raining);
   }
 
   /**
@@ -44,27 +68,11 @@ public class WorldStatePacket {
         this.raining == that.raining;
   }
 
-  public int getTime() {
-    return this.time;
-  }
-
   /**
    * {@inheritDoc}
    */
   @Override
   public int hashCode() {
     return Objects.hash(this.time, this.raining);
-  }
-
-  public boolean isRaining() {
-    return this.raining;
-  }
-
-  /**
-   * Serializes the world state packet into the supplied buffer.
-   */
-  public void write(@Nonnull ByteBuf buffer) {
-    buffer.writeShort(this.time);
-    buffer.writeBoolean(this.raining);
   }
 }
