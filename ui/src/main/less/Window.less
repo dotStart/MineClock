@@ -19,9 +19,16 @@
  * Fonts
  */
 @font-face {
-  font-family: 'FontAwesome';
-  font-weight: normal;
-  src: url(../font/FontAwesome.ttf);
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 400;
+  src: url(../font/fa-regular-400.ttf);
+}
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 900;
+  src: url(../font/fa-solid-900.ttf);
 }
 
 @font-face {
@@ -138,7 +145,6 @@
 
     .button {
       -fx-font-size: 14px;
-      -fx-font-family: FontAwesome;
       -fx-text-fill: white;
       -fx-background-color: transparent;
       -fx-padding: 8px 14px;
@@ -148,4 +154,14 @@
       }
     }
   }
+}
+
+.far {
+  -fx-font-family: 'Font Awesome 5 Free';
+  -fx-font-weight: 400;
+}
+
+.fas {
+  -fx-font-family: 'Font Awesome 5 Free';
+  -fx-font-weight: 900;
 }

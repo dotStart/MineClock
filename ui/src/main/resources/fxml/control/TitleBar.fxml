@@ -29,7 +29,7 @@
   <HBox styleClass="actions">
     <HBox styleClass="additional-actions" fx:id="buttons"/>
 
-    <Button onAction="#onIconify" styleClass="iconify" text="&#xf070;" fx:id="iconifyButton"/>
-    <Button onAction="#onClose" styleClass="close" text="&#xf00d;" fx:id="closeButton"/>
+    <Button onAction="#onIconify" styleClass="fas,iconify" text="&#xf2d1;" fx:id="iconifyButton"/>
+    <Button onAction="#onClose" styleClass="fas,close" text="&#xf410;" fx:id="closeButton"/>
   </HBox>
 </fx:root>

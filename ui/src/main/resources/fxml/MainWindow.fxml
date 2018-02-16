@@ -43,9 +43,9 @@
 
   <VBox alignment="TOP_LEFT">
     <TitleBar title="MineClock">
-      <Button onAction="#onPortrait" text="&#xf066;" fx:id="portraitButton"/>
-      <Button onAction="#onLandscape" text="&#xf065;" visible="false" fx:id="landscapeButton"/>
-      <Button onAction="#onSettings" text="&#xf085;"/>
+      <Button onAction="#onPortrait" styleClass="fas" text="&#xf021;" fx:id="portraitButton"/>
+      <Button onAction="#onLandscape" styleClass="fas" text="&#xf021;" visible="false" fx:id="landscapeButton"/>
+      <Button onAction="#onSettings" styleClass="fas" text="&#xf0ad;"/>
     </TitleBar>
     <VBox VBox.vgrow="ALWAYS" alignment="BOTTOM_CENTER" spacing="70">
       <padding>
