@@ -72,7 +72,7 @@ public class SettingsWindowController implements Initializable {
       String version = (p == null ? null : p.getImplementationVersion());
 
       this.versionLabel
-          .setText(String.format(this.versionLabel.getText(), (version == null ? "?" : version)));
+          .setText(String.format(this.versionLabel.getText(), (version == null ? "0.0.0" : version)));
     }
   }
 
