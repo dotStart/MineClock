@@ -17,7 +17,7 @@ This Java based program easily integrates with Minecraft and allows you to see w
 you focus on mining or PvP (I especially recommend trying to run it on another screen while playing
 UHC). As part of the program there is two methods of receiving correct times:
 
-* By installing the Java Development Kit and letting the magic happen
+* By installing the LiteLoader mod
 * By timing correctly using one of the four settings for Morning, Noon, Evening and Midnight respectively.
 
 Table of Contents
