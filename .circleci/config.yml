@@ -14,6 +14,7 @@ jobs:
     steps:
       - checkout
       - run: git lfs pull
+      - run: chmod +x gradlew
       - restore_cache:
           keys:
           - build-cache
