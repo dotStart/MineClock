@@ -16,10 +16,14 @@
  */
 package tv.dotstart.minecraft.clock.inject;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Locale.Category;
-import java.util.MissingResourceException;
 import java.util.Optional;
+import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import javax.annotation.Nonnull;
 import javax.inject.Provider;
@@ -62,9 +66,17 @@ public class ResourceBundleProvider implements Provider<ResourceBundle> {
    */
   @Nonnull
   private Optional<ResourceBundle> get(@Nonnull Locale locale) {
-    try {
-      return Optional.of(ResourceBundle.getBundle("localization/messages", locale));
-    } catch (MissingResourceException ex) {
+    try (InputStream inputStream = this.getClass().getResourceAsStream(
+        "/localization/messages_" + locale.getLanguage() + ".properties")) {
+      if (inputStream == null) {
+        return Optional.empty();
+      }
+
+      try (InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+        return Optional.of(new PropertyResourceBundle(reader));
+      }
+    } catch (IOException ex) {
+      logger.error("Failed to load resource bundle: " + ex.getMessage(), ex);
       return Optional.empty();
     }
   }
