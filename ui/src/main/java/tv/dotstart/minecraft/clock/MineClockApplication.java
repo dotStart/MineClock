@@ -18,6 +18,7 @@ package tv.dotstart.minecraft.clock;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -40,6 +42,7 @@ import javax.annotation.Nonnull;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import tv.dotstart.minecraft.clock.inject.FXMLProvider;
+import tv.dotstart.minecraft.clock.inject.ResourceBundleProvider;
 import tv.dotstart.minecraft.clock.service.server.WorldStateSynchronizationServer;
 
 /**
@@ -59,6 +62,7 @@ public class MineClockApplication extends Application {
     this.injector = Guice.createInjector((b) -> {
       b.bind(MineClockApplication.class).toInstance(this);
       b.bind(FXMLLoader.class).toProvider(FXMLProvider.class);
+      b.bind(ResourceBundle.class).toProvider(ResourceBundleProvider.class).in(Singleton.class);
     });
   }
 

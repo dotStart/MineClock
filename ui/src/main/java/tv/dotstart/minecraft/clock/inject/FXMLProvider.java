@@ -18,6 +18,7 @@ package tv.dotstart.minecraft.clock.inject;
 
 import com.google.inject.Injector;
 import java.nio.charset.StandardCharsets;
+import java.util.ResourceBundle;
 import javafx.fxml.FXMLLoader;
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -49,6 +50,7 @@ public class FXMLProvider implements Provider<FXMLLoader> {
     FXMLLoader loader = new FXMLLoader();
     loader.setCharset(StandardCharsets.UTF_8);
     loader.setControllerFactory(this.injector::getInstance);
+    loader.setResources(this.injector.getInstance(ResourceBundle.class));
     return loader;
   }
 }
