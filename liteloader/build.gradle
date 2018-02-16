@@ -17,6 +17,11 @@
 apply plugin: 'net.minecraftforge.gradle.liteloader'
 apply plugin: 'org.spongepowered.mixin'
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 minecraft {
     version = project.mcVersion
     mappings = project.mcMappings
@@ -24,7 +29,7 @@ minecraft {
 }
 
 dependencies {
-    compile project(':client')
+    shade project(':client')
 }
 
 litemod {
@@ -42,5 +47,12 @@ mixin {
 }
 
 jar {
+    baseName = 'MineClock'
     from litemod.outputs
+
+    configurations.shade.each { dep ->
+        from(project.zipTree(dep)) {
+            include 'tv/dotstart/minecraft/clock/**'
+        }
+    }
 }
