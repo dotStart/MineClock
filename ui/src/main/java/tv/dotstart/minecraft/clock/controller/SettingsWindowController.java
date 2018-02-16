@@ -90,7 +90,7 @@ public class SettingsWindowController implements Initializable {
   private void onOpenSourceInformation() {
     try {
       Desktop.getDesktop()
-          .browse(new URI("https://github.com/LordAkkarin/MineClock/wiki/ThirdPartyLicenses"));
+          .browse(new URI("https://github.com/dotStart/MineClock/wiki/ThirdPartyLicenses"));
     } catch (URISyntaxException | IOException ex) {
       MineClockApplication.reportError(ex);
     }
@@ -99,7 +99,7 @@ public class SettingsWindowController implements Initializable {
   @FXML
   private void onSource() {
     try {
-      Desktop.getDesktop().browse(new URI("https://github.com/LordAkkarin/MineClock"));
+      Desktop.getDesktop().browse(new URI("https://github.com/dotStart/MineClock"));
     } catch (URISyntaxException | IOException ex) {
       MineClockApplication.reportError(ex);
     }
