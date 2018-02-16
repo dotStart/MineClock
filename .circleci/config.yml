@@ -27,7 +27,7 @@ jobs:
       - run: ./gradlew build createExe
       - run: |
           mkdir /tmp/artifacts/
-          cp liteloader/build/libs/MineClock.litemod /tmp/artifacts/
+          cp liteloader/build/libs/MineClock-*.litemod /tmp/artifacts/
           cp ui/build/libs/MineClock.jar /tmp/artifacts/
           cp ui/build/launch4j/MineClock.exe /tmp/artifacts/
       - store_artifacts:
