@@ -17,13 +17,13 @@ jobs:
       - restore_cache:
           keys:
           - build-cache
-      - run: gradle dependencies
-      - run: gradle setupCiWorkspace
+      - run: ./gradlew dependencies
+      - run: ./gradlew setupCiWorkspace
       - save_cache:
           paths:
             - ~/.gradle
           key: build-cache
-      - run: gradle build createExe
+      - run: ./gradlew build createExe
       - run: |
           mkdir /tmp/artifacts/
           cp liteloader/build/libs/MineClock.litemod /tmp/artifacts/
