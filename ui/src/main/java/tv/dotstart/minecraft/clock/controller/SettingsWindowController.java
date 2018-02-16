@@ -95,7 +95,7 @@ public class SettingsWindowController implements Initializable {
   private void onOpenSourceInformation() {
     try {
       Desktop.getDesktop()
-          .browse(new URI("https://github.com/dotStart/MineClock/wiki/ThirdPartyLicenses"));
+          .browse(new URI("https://github.com/dotStart/MineClock/wiki/Third-Party-Licenses"));
     } catch (URISyntaxException | IOException ex) {
       MineClockApplication.reportError(ex);
     }
