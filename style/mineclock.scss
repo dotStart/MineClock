@@ -1,0 +1,27 @@
+---
+---
+
+#header-container {
+  background: #43c6ac;
+  background: radial-gradient(ellipse at bottom, #43c6ac, #191654);
+}
+
+#pitch,
+#download-buttons {
+  margin-top: 30px;
+}
+
+#page-header,
+#screenshot-container {
+  padding-bottom: 0;
+}
+
+#demo-container {
+  margin-top: 35px;
+}
+
+#demo {
+  width: 720px;
+  height: 405px;
+  margin-bottom: -60px;
+}
