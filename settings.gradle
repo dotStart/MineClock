@@ -1,4 +1,4 @@
-rootProject.name = 'parent'
+rootProject.name = 'MineClock'
 
 include 'network'
 project(':network').projectDir = "$rootDir/network" as File
